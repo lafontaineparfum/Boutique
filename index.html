@@ -1,0 +1,1612 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>La Fontaine — Gestion de boutique</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,600;1,500;1,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+:root{
+  --bg:#ECE6D4;
+  --panel:#FBF8EF;
+  --panel-alt:#F3EDDB;
+  --ink:#241F1B;
+  --ink-soft:#79705B;
+  --line:#DCD1AE;
+  --wine:#7A1E30;
+  --wine-deep:#54101E;
+  --wine-bg:#F2E0E1;
+  --gold:#AD8236;
+  --gold-bg:#F1E5C8;
+  --sage:#4F6350;
+  --sage-bg:#E1E8DC;
+  --amber:#B06A1B;
+  --amber-bg:#F3E2C3;
+  --red:#9C2F22;
+  --red-bg:#F2DAD1;
+  --radius:7px;
+  --font-display:'Fraunces', Georgia, serif;
+  --font-body:'Inter', -apple-system, sans-serif;
+  --font-mono:'IBM Plex Mono', monospace;
+  --shadow: 0 1px 2px rgba(36,31,27,0.06), 0 1px 0 rgba(36,31,27,0.04);
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg);
+  background-image:
+    radial-gradient(circle at 15% 8%, rgba(173,130,54,0.07), transparent 40%),
+    radial-gradient(circle at 90% 90%, rgba(122,30,48,0.05), transparent 45%);
+  color:var(--ink);
+  font-family:var(--font-body);
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+}
+button{font-family:inherit;}
+input,select,textarea{font-family:inherit;}
+
+/* ---------- Header ---------- */
+.app-header{text-align:center;padding:30px 16px 0;}
+.crest{display:inline-flex;align-items:center;gap:10px;color:var(--gold);margin-bottom:6px;}
+.crest svg{display:block;}
+.wordmark{font-family:var(--font-display);font-style:italic;font-weight:600;font-size:clamp(1.7rem,5vw,2.4rem);letter-spacing:0.01em;color:var(--wine);margin:0;}
+.tagline{font-family:var(--font-mono);text-transform:uppercase;letter-spacing:0.2em;font-size:0.64rem;color:var(--ink-soft);margin:6px 0 0;}
+.header-rule{max-width:640px;margin:16px auto 0;height:1px;background:linear-gradient(90deg, transparent, var(--gold), transparent);opacity:0.6;}
+
+.sync-row{max-width:1100px;margin:10px auto 0;display:flex;justify-content:center;align-items:center;gap:10px;padding:0 16px;font-family:var(--font-mono);font-size:0.68rem;color:var(--ink-soft);flex-wrap:wrap;text-align:center;}
+.sync-dot{width:7px;height:7px;border-radius:50%;background:var(--sage);display:inline-block;flex:none;}
+.sync-row button{border:1px solid var(--line);background:var(--panel);color:var(--ink-soft);padding:4px 9px;border-radius:6px;cursor:pointer;font-size:0.68rem;display:inline-flex;align-items:center;gap:5px;}
+.sync-row button:hover{border-color:var(--gold);color:var(--wine);}
+
+/* ---------- Nav ---------- */
+.tabs{max-width:1100px;margin:18px auto 0;display:flex;gap:4px;flex-wrap:wrap;justify-content:center;padding:0 16px;border-bottom:1px solid var(--line);}
+.tab-btn{appearance:none;background:none;border:none;cursor:pointer;font-family:var(--font-body);font-weight:600;font-size:0.82rem;letter-spacing:0.02em;color:var(--ink-soft);padding:10px 14px 12px;border-bottom:2px solid transparent;margin-bottom:-1px;display:flex;align-items:center;gap:7px;transition:color .15s;}
+.tab-btn:hover{color:var(--wine);}
+.tab-btn.active{color:var(--wine);border-bottom-color:var(--gold);}
+.tab-btn .icon{font-size:1rem;}
+
+/* ---------- Layout ---------- */
+.app-content{max-width:1100px;margin:0 auto;padding:22px 16px 80px;}
+.grid-2{display:grid;grid-template-columns:1.4fr 1fr;gap:18px;align-items:start;}
+@media (max-width:820px){.grid-2{grid-template-columns:1fr;}}
+.grid-2.even{grid-template-columns:1fr 1fr;}
+@media (max-width:820px){.grid-2.even{grid-template-columns:1fr;}}
+
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:18px;}
+.panel-header{padding:14px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;}
+.panel-title{font-family:var(--font-display);font-style:italic;font-weight:600;font-size:1.15rem;color:var(--wine);margin:0;}
+.panel-body{padding:16px;}
+.panel-sub{font-family:var(--font-mono);font-size:0.68rem;text-transform:uppercase;letter-spacing:0.12em;color:var(--ink-soft);}
+
+.field{margin-bottom:12px;}
+.field label{display:block;font-size:0.74rem;color:var(--ink-soft);margin-bottom:5px;font-weight:600;letter-spacing:0.01em;}
+.field input,.field select{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:6px;background:#fff;font-size:0.9rem;color:var(--ink);}
+.field input:focus,.field select:focus{outline:2px solid var(--gold);outline-offset:0;border-color:var(--gold);}
+
+.btn{appearance:none;border:1px solid var(--wine);background:var(--wine);color:#fff;padding:10px 16px;border-radius:6px;font-weight:600;font-size:0.86rem;cursor:pointer;transition:background .15s, transform .05s;}
+.btn:hover{background:var(--wine-deep);}
+.btn:active{transform:translateY(1px);}
+.btn:focus-visible{outline:2px solid var(--gold);outline-offset:2px;}
+.btn.secondary{background:var(--panel);color:var(--wine);border-color:var(--wine);}
+.btn.secondary:hover{background:var(--wine-bg);}
+.btn.ghost{background:none;border-color:var(--line);color:var(--ink-soft);}
+.btn.ghost:hover{border-color:var(--gold);color:var(--wine);}
+.btn.danger{background:var(--red);border-color:var(--red);}
+.btn.danger:hover{background:#7a2117;}
+.btn.gold{background:var(--gold);border-color:var(--gold);}
+.btn.gold:hover{background:#8f6a2a;}
+.btn.small{padding:6px 10px;font-size:0.76rem;}
+.btn:disabled{opacity:0.45;cursor:not-allowed;}
+.btn-block{width:100%;}
+
+.search-bar{position:relative;margin-bottom:14px;}
+.search-bar input{width:100%;padding:11px 12px 11px 34px;border:1px solid var(--line);border-radius:7px;background:#fff;font-size:0.92rem;}
+.search-bar .ic{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--ink-soft);}
+
+/* ---------- Product rows (Caisse) ---------- */
+.product-list{display:flex;flex-direction:column;gap:8px;max-height:520px;overflow-y:auto;padding-right:2px;}
+.product-row{border:1px solid var(--line);border-radius:6px;padding:10px 12px;background:var(--panel-alt);display:flex;flex-wrap:wrap;align-items:center;gap:10px;}
+.p-info{flex:1;min-width:150px;}
+.p-name{font-weight:600;font-size:0.9rem;}
+.p-house{font-size:0.76rem;color:var(--ink-soft);}
+.p-num{font-family:var(--font-mono);font-size:0.68rem;color:var(--gold);margin-right:6px;}
+.p-controls{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.qty-input{width:52px;padding:6px;border:1px solid var(--line);border-radius:5px;text-align:center;font-family:var(--font-mono);}
+.type-select{padding:6px 8px;border:1px solid var(--line);border-radius:5px;font-size:0.78rem;}
+.perso-price{width:64px;padding:6px;border:1px solid var(--line);border-radius:5px;font-family:var(--font-mono);text-align:center;}
+.add-btn{background:var(--sage);border-color:var(--sage);color:#fff;padding:7px 10px;border-radius:5px;font-weight:700;font-size:0.8rem;cursor:pointer;border:none;}
+.add-btn:hover{background:#3d4d3f;}
+
+/* ---------- Status pills / bottle gauge ---------- */
+.status-pill{display:inline-flex;align-items:center;gap:5px;font-family:var(--font-mono);font-size:0.66rem;text-transform:uppercase;letter-spacing:0.06em;padding:3px 8px;border-radius:20px;font-weight:600;white-space:nowrap;}
+.status-ok{background:var(--sage-bg);color:var(--sage);}
+.status-attention{background:var(--amber-bg);color:var(--amber);}
+.status-urgent{background:var(--red-bg);color:var(--red);}
+.bottle-cell{display:flex;align-items:center;gap:8px;}
+
+/* ---------- Restock ---------- */
+.restock-btn{background:none;border:1px solid var(--line);color:var(--gold);border-radius:5px;padding:6px 9px;font-size:0.8rem;cursor:pointer;font-weight:700;}
+.restock-btn:hover{border-color:var(--gold);background:var(--gold-bg);}
+.restock-box{margin-top:8px;padding:12px;background:#fff;border:1px dashed var(--gold);border-radius:6px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;width:100%;}
+.restock-box .rb-label{font-size:0.76rem;color:var(--ink-soft);width:100%;}
+
+/* ---------- Cart ---------- */
+.cart-line{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 0;border-bottom:1px dashed var(--line);font-size:0.85rem;}
+.cart-line:last-child{border-bottom:none;}
+.cart-line .cl-name{font-weight:600;}
+.cart-line .cl-meta{font-family:var(--font-mono);font-size:0.72rem;color:var(--ink-soft);}
+.cart-line .cl-total{font-family:var(--font-mono);font-weight:600;}
+.cart-remove{background:none;border:none;color:var(--red);cursor:pointer;font-size:0.9rem;padding:2px 4px;}
+.cart-empty{color:var(--ink-soft);font-size:0.86rem;padding:14px 0;text-align:center;}
+.cart-total-row{display:flex;justify-content:space-between;align-items:baseline;padding-top:12px;margin-top:6px;border-top:1px solid var(--line);}
+.cart-total-row .lbl{font-family:var(--font-mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--ink-soft);}
+.cart-total-row .val{font-family:var(--font-display);font-style:italic;font-size:1.6rem;color:var(--wine);}
+
+/* ---------- Tables ---------- */
+table{width:100%;border-collapse:collapse;font-size:0.84rem;}
+thead th{text-align:left;font-family:var(--font-mono);font-size:0.64rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--ink-soft);padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap;}
+tbody td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:middle;}
+tbody tr:hover{background:var(--panel-alt);}
+.num-cell{font-family:var(--font-mono);color:var(--gold);}
+.mono{font-family:var(--font-mono);}
+.table-wrap{overflow-x:auto;}
+.right{text-align:right;}
+.center{text-align:center;}
+
+/* ---------- KPI cards ---------- */
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:18px;}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow);}
+.kpi .k-label{font-family:var(--font-mono);font-size:0.64rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--ink-soft);}
+.kpi .k-value{font-family:var(--font-display);font-style:italic;font-size:1.9rem;color:var(--wine);margin-top:4px;}
+.kpi .k-sub{font-size:0.72rem;color:var(--ink-soft);margin-top:2px;}
+
+.filter-chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;align-items:center;}
+.chip{border:1px solid var(--line);background:var(--panel);color:var(--ink-soft);padding:5px 11px;border-radius:20px;font-size:0.76rem;font-weight:600;cursor:pointer;}
+.chip.active{background:var(--wine);border-color:var(--wine);color:#fff;}
+
+.settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 16px;}
+@media (max-width:600px){.settings-grid{grid-template-columns:1fr;}}
+.section-label{font-family:var(--font-mono);font-size:0.68rem;text-transform:uppercase;letter-spacing:0.14em;color:var(--gold);border-bottom:1px solid var(--line);padding-bottom:6px;margin:20px 0 12px;grid-column:1/-1;}
+.section-label:first-child{margin-top:0;}
+
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--ink);color:#fff;padding:10px 18px;border-radius:7px;font-size:0.85rem;box-shadow:0 4px 14px rgba(0,0,0,0.25);opacity:0;pointer-events:none;transition:opacity .2s, transform .2s;z-index:100;max-width:90vw;text-align:center;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+.empty-state{text-align:center;padding:40px 16px;color:var(--ink-soft);}
+.empty-state .es-title{font-family:var(--font-display);font-style:italic;color:var(--wine);font-size:1.2rem;margin-bottom:6px;}
+
+.loading-screen{min-height:70vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:var(--ink-soft);font-family:var(--font-mono);font-size:0.8rem;letter-spacing:0.08em;text-transform:uppercase;}
+.spinner{width:30px;height:30px;border:2px solid var(--line);border-top-color:var(--wine);border-radius:50%;animation:spin 0.8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+.date-input{padding:8px 10px;border:1px solid var(--line);border-radius:6px;font-family:var(--font-mono);font-size:0.82rem;}
+.note-line{font-size:0.78rem;color:var(--ink-soft);font-style:italic;}
+.hint{font-size:0.76rem;color:var(--ink-soft);margin-top:8px;line-height:1.5;}
+.warn-box{background:var(--amber-bg);color:var(--amber);border-radius:6px;padding:8px 10px;font-size:0.78rem;margin-bottom:10px;}
+.info-box{background:var(--sage-bg);color:var(--sage);border-radius:6px;padding:8px 10px;font-size:0.78rem;margin-bottom:12px;}
+
+/* ---------- Charts ---------- */
+.chart-bars{display:flex;align-items:flex-end;gap:5px;height:160px;padding-top:14px;overflow-x:auto;}
+.chart-bar-col{flex:1;min-width:26px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;}
+.chart-bar{width:100%;max-width:24px;border-radius:3px 3px 0 0;background:var(--wine);transition:height .3s;min-height:2px;}
+.chart-bar.current{background:var(--gold);}
+.chart-label{font-family:var(--font-mono);font-size:0.58rem;color:var(--ink-soft);margin-top:6px;text-align:center;white-space:nowrap;}
+.chart-value{font-family:var(--font-mono);font-size:0.6rem;color:var(--ink-soft);margin-bottom:3px;white-space:nowrap;}
+.weekday-chart{display:flex;align-items:flex-end;gap:8px;height:120px;padding-top:14px;}
+.month-select{padding:8px 10px;border:1px solid var(--line);border-radius:6px;font-family:var(--font-mono);font-size:0.8rem;}
+.legend-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;}
+
+.file-label{display:inline-block;border:1px solid var(--wine);color:var(--wine);background:var(--panel);padding:9px 14px;border-radius:6px;font-weight:600;font-size:0.84rem;cursor:pointer;}
+.file-label:hover{background:var(--wine-bg);}
+</style>
+</head>
+<body>
+
+<div class="app-header">
+  <div class="crest">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M10 2h4v3.2c0 .9.3 1.7.9 2.4l1.2 1.4c.9 1 1.4 2.4 1.4 3.8v6.2a3 3 0 0 1-3 3h-5a3 3 0 0 1-3-3v-6.2c0-1.4.5-2.8 1.4-3.8l1.2-1.4c.6-.7.9-1.5.9-2.4V2Z" stroke="currentColor" stroke-width="1.3"/><path d="M9 9.5h6" stroke="currentColor" stroke-width="1.3"/></svg>
+  </div>
+  <h1 class="wordmark">La Fontaine</h1>
+  <p class="tagline">Parfumerie de niche · Gestion de boutique</p>
+  <div class="header-rule"></div>
+</div>
+
+<div class="sync-row">
+  <span class="sync-dot" id="sync-dot"></span>
+  <span id="sync-label">—</span>
+  <button id="refresh-btn" type="button">⟳ Actualiser maintenant</button>
+  <button id="local-file-btn" type="button">📁 Connecter un fichier local</button>
+</div>
+<div id="storage-warning" style="display:none; max-width:640px; margin:12px auto 0; padding:10px 14px; background:var(--amber-bg); color:var(--amber); border-radius:7px; font-size:0.82rem; text-align:center;">
+  📍 Mode local : le stockage partagé en ligne n'est pas actif ici. Cliquez sur <strong>« Connecter un fichier local »</strong> ci-dessus pour que chaque changement soit automatiquement enregistré dans un fichier sur votre ordinateur (placez-le dans un dossier iCloud Drive pour qu'il se synchronise entre vos appareils).
+</div>
+
+<div id="root"></div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================= DATA ============================= */
+const PRODUCTS_RAW = [[1, "Afternoon swim", "Louis Vuitton", 600], [2, "Aventus", "Creed", 500], [3, "Bal d'afrique", "Byredo", 550], [4, "Bleu", "Chanel", 600], [5, "Blue Talisman", "Ex Nihilo", 600], [6, "Elysium Pour Homme", "Roja", 600], [7, "Erba Gold", "Xerjoff", 500], [8, "Green Irish Tweed", "Creed", 550], [9, "Hacivat", "Nishane", 600], [10, "Imagination", "Louis Vuitton", 550], [11, "Le beau paradise garden", "Jean Paul Gauthier", 250], [12, "Megamar", "Orto Parisi", 600], [13, "Neroli Portofino", "Tom Ford", 500], [14, "Oceania", "Roja", 550], [15, "Pacific chill", "Louis Vuitton", 550], [16, "Sauvage", "Dior", 450], [17, "Silver Mountain Water", "Creed", 550], [18, "Symphony", "Louis Vuitton", 350], [19, "Torino21", "Xerjoff", 550], [20, "Vibrato", "Sospiro", 600], [21, "Althair", "Parfum de marly", 450], [22, "Amore Cafe", "Mancera", 600], [23, "Angel's Share", "Kilian", 400], [24, "Ani", "Nishane", 600], [25, "Bianco Latte", "Giardini Di Toscana", 450], [26, "Black Opium Baby Cat", "Yves Saint Laurent", 500], [27, "Black Phantom", "Kilian", 600], [28, "Escapade Gourmande", "Maison Mataha", 550], [29, "Grand Soir", "Maison Francis Kurkdjian", 500], [30, "Le Male Elixir", "Jean Paul Gauthier", 250], [31, "Lira", "Casamorati", 550], [32, "Musc Ravageur", "Frédérique Male", 600], [33, "Musc Therapy", "Initio", 600], [34, "Naxos", "Xerjoff", 600], [35, "Pegasus", "Parfum de marly", 550], [36, "Rose Vanille", "Mancera", 600], [37, "Spiritueuse Double Vanille", "Guerlain", 600], [38, "Stronger with you intensely", "Armani", 350], [39, "Vanilla 28", "Kayali", 500], [40, "Vanilla Powder", "Matière Première", 350], [41, "Alien", "Mugler", 600], [42, "Atomic Rose", "Initio", 550], [43, "Baccarat Rouge", "Maison Francis Kurkdjian", 550], [44, "Chance Eau Tendre", "Chanel", 550], [45, "Delina Exclusif", "Parfum de marly", 350], [46, "Eden Juicy Apple 01", "Kayali", 500], [47, "Gentle Fluidity Gold", "Maison Francis Kurkdjian", 500], [48, "Good Girl", "Carolina Herrera", 400], [49, "Guidance 46", "Amouage", 550], [50, "Hibiscus Mahajad", "Maison Creveli", 400], [51, "Almaz", "Kajal", 450], [52, "Libre Intense", "Yves Saint Laurent", 550], [53, "L'interdit Rouge", "Givenchy", 400], [54, "Love don't Be Shy", "Kilian", 600], [55, "Portrait of a lady", "Frédérique Male", 600], [56, "Pure musk for her", "Narciso Rodriguez", 500], [57, "Rouge Tarafalagar", "Dior", 550], [58, "Soleil Blanc", "Tom Ford", 550], [59, "Tilia", "Marc Antoine Barrois", 450], [60, "Valaya", "Parfum de marly", 500], [61, "Alexandria II", "Xerjoff", 600], [62, "Blonde Amber", "Clive Christian", 550], [63, "Bottled Absolut", "Hugo Boss", 600], [64, "Cedrat Boise", "Mancera", 600], [65, "Golden Dallah", "Xerjoff", 600], [66, "Gris Charnel Extrait", "BDK", 600], [67, "Halfeti", "Penhaligon's", 600], [68, "Haltane", "Parfum de marly", 600], [69, "Les Sables Roses", "Louis Vuitton", 450], [70, "Ombre Nomade", "Louis Vuitton", 550], [71, "Oud Cadenza", "Maison Creveli", 600], [72, "Oud for greatness", "Initio", 600], [73, "Oud Ispahan", "Dior", 600], [74, "Oud Maracuja", "Maison Creveli", 500], [75, "Oud Satin Mood Extrait", "Maison Francis Kurkdjian", 600], [76, "Oud Wood", "Tom Ford", 600], [77, "Purpose 50", "Amouage", 600], [78, "Royal Oud", "Creed", 600], [79, "Santal 33", "Le Labo", 500], [80, "The Moon", "Frédérique Male", 500], [81, "Africain Leather", "Memo Paris", 600], [82, "Black Afgano", "Nasomatto", 600], [83, "Bois d'Argent", "Dior", 500], [84, "Bois Impérial Extrait", "Essential Parfums", 600], [85, "Carlisle", "Parfum de marly", 600], [86, "Coromandel", "Chanel", 600], [87, "Fabulous", "Tom Ford", 600], [88, "Flacon Leather", "Matière Première", 600], [89, "Ganymede", "Marc Antoine Barrois", 600], [90, "Homme Intense", "Dior", 550], [91, "Homme Parfum", "Dior", 600], [92, "Interlude Man", "Amouage", 600], [93, "Ombre Leather", "Tom Ford", 450], [94, "Patchouli Intense", "Nicolai", 350], [95, "Red Tobacco", "Mancera", 550], [96, "Side Effect", "Initio", 550], [97, "Terre d'Hermes", "Hermes", 600], [98, "Terroni", "Orto Parisi", 550], [99, "Tuscan Leather", "Tom Ford", 600], [100, "Tuxedo", "Yves Saint Laurent", 500]];
+let CATALOG = [];         // tous les parfums connus (actifs + retirés) — persisté
+let PRODUCTS = [];        // sous-ensemble actif, dérivé de CATALOG (pour la vente/le stock)
+let PRODUCT_BY_NUM = {};  // num -> produit, résolu depuis CATALOG (actifs ET retirés, pour l'historique)
+
+function computeDefaultFamily(num){
+  const f = FAMILIES.find(fam => num >= fam.min && num <= fam.max);
+  return f ? f.key : FAMILIES[FAMILIES.length - 1].key;
+}
+function buildDefaultCatalog(){
+  return PRODUCTS_RAW.map(([num,name,maison]) => ({ num, name, maison, family: computeDefaultFamily(num), removed:false }));
+}
+function normalizeCatalog(raw){
+  if(!Array.isArray(raw) || !raw.length) return buildDefaultCatalog();
+  return raw.map(p => ({
+    num: p.num,
+    name: p.name || `Parfum #${p.num}`,
+    maison: p.maison || '',
+    family: p.family && FAMILIES.some(f => f.key === p.family) ? p.family : computeDefaultFamily(p.num),
+    removed: !!p.removed
+  })).sort((a,b) => a.num - b.num);
+}
+function rebuildCatalogIndexes(){
+  PRODUCTS = CATALOG.filter(p => !p.removed);
+  PRODUCT_BY_NUM = Object.fromEntries(CATALOG.map(p => [p.num, p]));
+}
+function nextCatalogNum(){
+  return CATALOG.length ? Math.max(...CATALOG.map(p => p.num)) + 1 : 1;
+}
+
+const DEFAULT_SETTINGS = {
+  prixRegulier: 50, prixPromo: 40, prixFidele: 30,
+  volumeBouteille: 600, volumeVente: 50,
+  seuilUrgent: 250, seuilAttention: 300
+};
+
+const TYPE_LABELS = { R: 'Régulier', P: 'Promo', F: 'Fidèle / Famille', X: 'Prix perso' };
+const TYPE_COLORS = { R: 'var(--ink)', P: 'var(--amber)', F: 'var(--sage)', X: 'var(--wine)' };
+const PAYMENT_LABELS = { cash: 'Comptant', carte: 'Carte' };
+const WEEKDAY_LABELS = ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
+const MONTH_LABELS = ['jan','fév','mar','avr','mai','juin','juil','août','sep','oct','nov','déc'];
+
+/* Familles olfactives par plage de numéro, avec une couleur dédiée à chacune. */
+const FAMILIES = [
+  { key:'bleu',    min:1,  max:20,  label:'Bleu',    color:'#3E6B8A' },
+  { key:'vanille', min:21, max:40,  label:'Vanille', color:'#B8863B' },
+  { key:'rose',    min:41, max:60,  label:'Rose',    color:'#C06C86' },
+  { key:'brun',    min:61, max:80,  label:'Brun',    color:'#7A5230' },
+  { key:'vert',    min:81, max:100, label:'Vert',    color:'#5C7A52' }
+];
+function familyOf(num){
+  const p = PRODUCT_BY_NUM[num];
+  const key = (p && p.family) || computeDefaultFamily(num);
+  return FAMILIES.find(f => f.key === key) || FAMILIES[0];
+}
+function familyDot(num){
+  const f = familyOf(num);
+  return `<span title="Famille ${f.label}" style="display:inline-block;width:8px;height:8px;border-radius:2px;background:${f.color};margin-right:5px;flex:none;vertical-align:middle;"></span>`;
+}
+
+/* ============================= STATE ============================= */
+let S = {
+  settings: {...DEFAULT_SETTINGS},
+  stock: {},            // num -> {ml, sold}
+  summary: {months:{}, days:{}},
+  salesByMonth: {},      // 'YYYY-MM' -> array (only loaded months)
+  cart: [],
+  tab: 'caisse',
+  caisseQuery: '',
+  caisseDate: todayISO(),
+  caisseNote: '',
+  stockQuery: '',
+  stockFilter: 'all',
+  stockFamily: 'all',
+  showRemoved: false,
+  addProductOpen: false,
+  stockSort: 'name',
+  restockOpenNum: null,
+  histMonth: '',
+  histDay: '',
+  histLoading: false,
+  loaded: false,
+  lastSync: null,
+  polling: false,
+  localFileName: null,
+  localFileSavedAt: null
+};
+let localFileHandle = null; // FileSystemFileHandle (en mémoire seulement, pas persistant entre rechargements)
+
+const FULL_BOTTLE_ML = 600; // toutes les bouteilles démarrent pleines à 600 ml
+
+function defaultStock(){
+  const full = (S.settings && S.settings.volumeBouteille) || FULL_BOTTLE_ML;
+  const s = {};
+  CATALOG.forEach(p => s[p.num] = {ml: full, sold: 0});
+  return s;
+}
+function normalizeStock(raw){
+  const full = (S.settings && S.settings.volumeBouteille) || FULL_BOTTLE_ML;
+  const out = {};
+  CATALOG.forEach(p => {
+    const v = raw ? raw[p.num] : undefined;
+    if(v && typeof v === 'object') out[p.num] = {ml: typeof v.ml === 'number' ? v.ml : full, sold: typeof v.sold === 'number' ? v.sold : 0};
+    else if(typeof v === 'number') out[p.num] = {ml: v, sold: 0};
+    else out[p.num] = {ml: full, sold: 0};
+  });
+  // Conserve les entrées de stock pour tout numéro déjà connu dans les données mais pas encore dans CATALOG
+  // (ex. import d'une sauvegarde plus récente que le catalogue local).
+  if(raw){ Object.keys(raw).forEach(k => { if(!(k in out)) out[k] = raw[k]; }); }
+  return out;
+}
+
+/* ============================= UTIL ============================= */
+function todayISO(){ return new Date().toISOString().slice(0,10); }
+function nowTime(){ const d = new Date(); return d.toTimeString().slice(0,5); }
+function fmtMoney(n){ return new Intl.NumberFormat('fr-CA', {style:'currency', currency:'CAD'}).format(n||0); }
+function fmtDateFR(iso){
+  if(!iso) return '';
+  const d = new Date(iso + 'T12:00:00');
+  return d.toLocaleDateString('fr-CA', {day:'numeric', month:'long', year:'numeric'});
+}
+function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function monthKey(dateStr){ return dateStr.slice(0,7); }
+function currentMonthKey(){ return todayISO().slice(0,7); }
+function shiftMonthKey(mk, delta){
+  const [y,m] = mk.split('-').map(Number);
+  const d = new Date(y, m - 1 + delta, 1);
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0');
+}
+function getWeekRange(iso){
+  // Renvoie [lundi, dimanche] de la semaine calendaire contenant la date donnée.
+  const d = new Date(iso + 'T12:00:00');
+  const day = d.getDay(); // 0=dim,1=lun,...6=sam
+  const diffToMonday = (day === 0 ? -6 : 1) - day;
+  const monday = new Date(d); monday.setDate(d.getDate() + diffToMonday);
+  const sunday = new Date(monday); sunday.setDate(monday.getDate() + 6);
+  return [monday.toISOString().slice(0,10), sunday.toISOString().slice(0,10)];
+}
+function fmtDayMonth(iso){
+  const d = new Date(iso + 'T12:00:00');
+  return d.toLocaleDateString('fr-CA', {day:'numeric', month:'short'});
+}
+function monthLabel(mk){
+  const [y,m] = mk.split('-').map(Number);
+  return MONTH_LABELS[m-1] + " '" + String(y).slice(2);
+}
+
+function statusOf(ml){
+  if(ml <= S.settings.seuilUrgent) return 'urgent';
+  if(ml <= S.settings.seuilAttention) return 'attention';
+  return 'ok';
+}
+function statusLabel(st){ return {ok:'OK', attention:'Réappro à prévoir', urgent:'Urgent — commander'}[st]; }
+function statusPill(st){ return `<span class="status-pill status-${st}">${bottleDot(st)} ${statusLabel(st)}</span>`; }
+function bottleDot(st){
+  const color = st === 'urgent' ? 'var(--red)' : st === 'attention' ? 'var(--amber)' : 'var(--sage)';
+  return `<svg width="7" height="7" style="border-radius:50%;background:${color};display:inline-block;flex:none;"></svg>`;
+}
+function bottleGauge(ml){
+  const max = S.settings.volumeBouteille || 600;
+  const pct = Math.max(0, Math.min(1, ml / max));
+  const st = statusOf(ml);
+  const color = st === 'urgent' ? 'var(--red)' : st === 'attention' ? 'var(--amber)' : 'var(--sage)';
+  const bodyH = 26, bodyY = 12, bodyW = 16, bodyX = 4;
+  const fillH = bodyH * pct;
+  const fillY = bodyY + (bodyH - fillH);
+  const cid = 'clip' + Math.round(ml*100) + Math.round(pct*1000);
+  return `
+  <svg width="24" height="40" viewBox="0 0 24 40" aria-hidden="true">
+    <rect x="9" y="2" width="6" height="6" rx="1" fill="none" stroke="var(--line)" stroke-width="1.3"/>
+    <rect x="${bodyX}" y="${bodyY}" width="${bodyW}" height="${bodyH}" rx="3" fill="#fff" stroke="var(--line)" stroke-width="1.3"/>
+    <clipPath id="${cid}"><rect x="${bodyX}" y="${bodyY}" width="${bodyW}" height="${bodyH}" rx="3"/></clipPath>
+    <rect x="${bodyX}" y="${fillY.toFixed(1)}" width="${bodyW}" height="${fillH.toFixed(1)}" fill="${color}" opacity="0.85" clip-path="url(#${cid})"/>
+  </svg>`;
+}
+
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+/* ============================= STORAGE ============================= */
+async function storGet(key){
+  try{ const r = await window.storage.get(key, true); return r ? JSON.parse(r.value) : null; }
+  catch(e){ return null; }
+}
+async function storSet(key, value){
+  try{ const r = await window.storage.set(key, JSON.stringify(value), true); return !!r; }
+  catch(e){ return false; }
+}
+async function storDelete(key){
+  try{ await window.storage.delete(key, true); return true; }
+  catch(e){ return false; }
+}
+async function storList(prefix){
+  try{ const r = await window.storage.list(prefix, true); return r ? r.keys : []; }
+  catch(e){ return []; }
+}
+
+async function getMonthSales(mk){
+  if(S.salesByMonth[mk]) return S.salesByMonth[mk];
+  const arr = (await storGet('lf-sales:' + mk)) || [];
+  S.salesByMonth[mk] = arr;
+  return arr;
+}
+
+/* Base locale d'abord : on part toujours des données déjà en mémoire (jamais des valeurs
+   par défaut vierges), et on ne se sert du stockage partagé que s'il répond vraiment.
+   Cela évite d'écraser le stock/l'historique quand on travaille sans stockage en ligne. */
+async function mutateStock(mutator){
+  let base = S.stock;
+  if(typeof window.storage !== 'undefined'){
+    try{ const remote = await storGet('lf-stock'); if(remote) base = normalizeStock(remote); }
+    catch(e){ /* on garde la base locale */ }
+  }
+  mutator(base);
+  S.stock = base;
+  if(typeof window.storage !== 'undefined'){
+    try{ await storSet('lf-stock', base); }catch(e){ /* la sauvegarde locale prendra le relais */ }
+  }
+  return base;
+}
+async function mutateSummary(mutator){
+  let base = S.summary;
+  if(typeof window.storage !== 'undefined'){
+    try{
+      const remote = await storGet('lf-summary');
+      if(remote){ base = remote; if(!base.months) base.months = {}; if(!base.days) base.days = {}; }
+    }catch(e){ /* on garde la base locale */ }
+  }
+  mutator(base);
+  S.summary = base;
+  if(typeof window.storage !== 'undefined'){
+    try{ await storSet('lf-summary', base); }catch(e){}
+  }
+  return base;
+}
+async function mutateMonthSales(mk, mutator){
+  let base = S.salesByMonth[mk] || [];
+  if(typeof window.storage !== 'undefined'){
+    try{ const remote = await storGet('lf-sales:' + mk); if(remote) base = remote; }
+    catch(e){ /* on garde la base locale */ }
+  }
+  mutator(base);
+  S.salesByMonth[mk] = base;
+  if(typeof window.storage !== 'undefined'){
+    try{ await storSet('lf-sales:' + mk, base); }catch(e){}
+  }
+  return base;
+}
+
+function addToSummary(summary, date, qty, total, type){
+  const mk = monthKey(date);
+  if(!summary.months[mk]) summary.months[mk] = {units:0, revenue:0, byType:{R:0,P:0,F:0,X:0}};
+  summary.months[mk].units += qty;
+  summary.months[mk].revenue += total;
+  summary.months[mk].byType[type] = (summary.months[mk].byType[type]||0) + total;
+  if(!summary.days[date]) summary.days[date] = {units:0, revenue:0};
+  summary.days[date].units += qty;
+  summary.days[date].revenue += total;
+}
+function subtractFromSummary(summary, date, qty, total, type){
+  const mk = monthKey(date);
+  if(summary.months[mk]){
+    summary.months[mk].units = Math.max(0, summary.months[mk].units - qty);
+    summary.months[mk].revenue = Math.max(0, summary.months[mk].revenue - total);
+    summary.months[mk].byType[type] = Math.max(0, (summary.months[mk].byType[type]||0) - total);
+  }
+  if(summary.days[date]){
+    summary.days[date].units = Math.max(0, summary.days[date].units - qty);
+    summary.days[date].revenue = Math.max(0, summary.days[date].revenue - total);
+  }
+}
+
+async function loadAll(){
+  const cmk = currentMonthKey();
+  const pmk = shiftMonthKey(cmk, -1);
+  const [settings, catalogRaw, stockRaw, summary, curSales, prevSales] = await Promise.all([
+    storGet('lf-settings'), storGet('lf-catalog'), storGet('lf-stock'), storGet('lf-summary'),
+    storGet('lf-sales:' + cmk), storGet('lf-sales:' + pmk)
+  ]);
+  S.settings = settings || {...DEFAULT_SETTINGS};
+  CATALOG = normalizeCatalog(catalogRaw);
+  rebuildCatalogIndexes();
+  S.stock = normalizeStock(stockRaw);
+  S.summary = summary || {months:{}, days:{}};
+  if(!S.summary.months) S.summary.months = {};
+  if(!S.summary.days) S.summary.days = {};
+  S.salesByMonth[cmk] = curSales || [];
+  S.salesByMonth[pmk] = prevSales || [];
+  if(!settings) await storSet('lf-settings', S.settings);
+  if(!catalogRaw) await storSet('lf-catalog', CATALOG);
+  if(!stockRaw) await storSet('lf-stock', S.stock);
+  if(!summary) await storSet('lf-summary', S.summary);
+  S.histMonth = cmk;
+  S.loaded = true;
+  S.lastSync = new Date();
+  updateSyncLabel();
+}
+
+async function silentRefresh(){
+  if(typeof window.storage === 'undefined') return; // rien à synchroniser sans stockage partagé
+  const active = document.activeElement;
+  if(active && ['INPUT','SELECT','TEXTAREA'].includes(active.tagName)) return; // ne pas interrompre la saisie
+  const cmk = currentMonthKey();
+  const [stockRaw, summary, curSales, catalogRaw] = await Promise.all([
+    storGet('lf-stock'), storGet('lf-summary'), storGet('lf-sales:' + cmk), storGet('lf-catalog')
+  ]);
+  if(catalogRaw){ CATALOG = normalizeCatalog(catalogRaw); rebuildCatalogIndexes(); }
+  if(stockRaw) S.stock = normalizeStock(stockRaw);
+  if(summary){ S.summary = summary; if(!S.summary.months) S.summary.months={}; if(!S.summary.days) S.summary.days={}; }
+  if(curSales) S.salesByMonth[cmk] = curSales;
+  S.lastSync = new Date();
+  updateSyncLabel();
+  render();
+}
+
+function updateSyncLabel(){
+  const el = document.getElementById('sync-label');
+  if(!el) return;
+  const parts = [];
+  if(S.lastSync) parts.push('Espace partagé · à jour à ' + S.lastSync.toLocaleTimeString('fr-CA', {hour:'2-digit', minute:'2-digit'}));
+  else parts.push('—');
+  if(S.localFileName){
+    const t = S.localFileSavedAt ? S.localFileSavedAt.toLocaleTimeString('fr-CA', {hour:'2-digit', minute:'2-digit'}) : '…';
+    parts.push(`📁 ${S.localFileName} · sauvegardé à ${t}`);
+  }
+  el.textContent = parts.join(' · ');
+  const btn = document.getElementById('local-file-btn');
+  if(btn) btn.textContent = S.localFileName ? `📁 ${S.localFileName} (connecté)` : '📁 Connecter un fichier local';
+}
+
+/* ============================= RENDER ROOT ============================= */
+function render(){
+  const root = document.getElementById('root');
+  if(!S.loaded){
+    root.innerHTML = `<div class="loading-screen"><div class="spinner"></div><div>Chargement des données de la boutique…</div></div>`;
+    return;
+  }
+  root.innerHTML = `
+    <div class="tabs">
+      ${tabBtn('caisse','🛒','Caisse')}
+      ${tabBtn('stock','📦','Stock')}
+      ${tabBtn('dashboard','📊','Tableau de bord')}
+      ${tabBtn('historique','📋','Historique')}
+      ${tabBtn('reglages','⚙️','Réglages')}
+    </div>
+    <div class="app-content" id="content"></div>
+  `;
+  document.querySelectorAll('.tab-btn').forEach(b => b.addEventListener('click', () => { S.tab = b.dataset.tab; render(); }));
+  const content = document.getElementById('content');
+  if(S.tab === 'caisse') content.innerHTML = renderCaisse();
+  else if(S.tab === 'stock') content.innerHTML = renderStock();
+  else if(S.tab === 'dashboard') content.innerHTML = renderDashboard();
+  else if(S.tab === 'historique') content.innerHTML = renderHistorique();
+  else if(S.tab === 'reglages') content.innerHTML = renderReglages();
+  bindTabEvents();
+}
+function tabBtn(id, icon, label){
+  return `<button class="tab-btn ${S.tab===id?'active':''}" data-tab="${id}" type="button"><span class="icon">${icon}</span>${label}</button>`;
+}
+
+/* ============================= CAISSE ============================= */
+function filteredProductsCaisse(){
+  const q = S.caisseQuery.trim().toLowerCase();
+  let list = PRODUCTS;
+  if(q){
+    list = PRODUCTS.filter(p => p.name.toLowerCase().includes(q) || p.maison.toLowerCase().includes(q) || String(p.num) === q);
+  }
+  return list.slice(0, q ? 40 : 12);
+}
+
+function renderCaisse(){
+  const list = filteredProductsCaisse();
+  const cartTotal = S.cart.reduce((a,l) => a + l.total, 0);
+  const cartUnits = S.cart.reduce((a,l) => a + l.qty, 0);
+
+  return `
+  <div class="grid-2">
+    <div class="panel" style="margin-bottom:0;">
+      <div class="panel-header">
+        <h2 class="panel-title">Vente rapide</h2>
+        <span class="panel-sub">${PRODUCTS.length} parfums</span>
+      </div>
+      <div class="panel-body">
+        <div class="search-bar">
+          <span class="ic">🔍</span>
+          <input id="caisse-search" type="text" placeholder="Chercher par nom, maison ou numéro…" value="${escapeHtml(S.caisseQuery)}">
+        </div>
+        <div class="product-list" id="product-list">
+          ${list.length ? list.map(p => productRow(p)).join('') : `<div class="empty-state"><div class="es-title">Aucun résultat</div>Essayez un autre nom ou numéro.</div>`}
+        </div>
+        ${!S.caisseQuery ? `<div class="hint">Affiche les 12 premiers parfums — tapez pour chercher parmi les 100.</div>` : ''}
+      </div>
+    </div>
+
+    <div class="panel" style="position:sticky; top:16px; margin-bottom:0;">
+      <div class="panel-header">
+        <h2 class="panel-title">Panier</h2>
+        <span class="panel-sub">${cartUnits} unité${cartUnits>1?'s':''}</span>
+      </div>
+      <div class="panel-body">
+        <div class="field">
+          <label for="caisse-date">Date de la vente</label>
+          <input id="caisse-date" class="date-input" type="date" value="${S.caisseDate}" style="width:100%;">
+        </div>
+        <div id="cart-lines">
+          ${S.cart.length ? S.cart.map((l,i) => cartLine(l,i)).join('') : `<div class="cart-empty">Le panier est vide.<br>Ajoutez un parfum à gauche.</div>`}
+        </div>
+        ${S.cart.length ? `
+        <div class="field" style="margin-top:10px;">
+          <label for="caisse-note">Note (optionnel)</label>
+          <input id="caisse-note" type="text" placeholder="Ex. client régulier, commande spéciale…" value="${escapeHtml(S.caisseNote)}">
+        </div>` : ''}
+        <div class="cart-total-row">
+          <span class="lbl">Total</span>
+          <span class="val">${fmtMoney(cartTotal)}</span>
+        </div>
+        <div style="margin-top:14px; display:flex; gap:8px;">
+          <button class="btn btn-block" id="commit-sale" type="button" ${S.cart.length?'':'disabled'}>Enregistrer la vente</button>
+        </div>
+        ${S.cart.length ? `<button class="btn ghost btn-block" id="clear-cart" type="button" style="margin-top:8px;">Vider le panier</button>` : ''}
+      </div>
+    </div>
+  </div>`;
+}
+
+function productRow(p){
+  const st = S.stock[p.num] || {ml: S.settings.volumeBouteille || FULL_BOTTLE_ML, sold:0};
+  const status = statusOf(st.ml);
+  return `
+  <div class="product-row" data-num="${p.num}">
+    <div class="p-info">
+      <div class="p-name">${familyDot(p.num)}<span class="p-num">#${p.num}</span>${escapeHtml(p.name)}</div>
+      <div class="p-house">${escapeHtml(p.maison)} · ${st.ml} ml restant ${status!=='ok' ? '· '+ (status==='urgent'?'🔴':'🟠') : ''}</div>
+    </div>
+    <div class="p-controls">
+      <select class="type-select" data-role="type">
+        <option value="R">Régulier — ${fmtMoney(S.settings.prixRegulier)}</option>
+        <option value="P">Promo — ${fmtMoney(S.settings.prixPromo)}</option>
+        <option value="F">Fidèle/Famille — ${fmtMoney(S.settings.prixFidele)}</option>
+        <option value="X">Prix perso</option>
+      </select>
+      <input class="perso-price" data-role="perso" type="number" min="0" step="0.5" placeholder="$" style="display:none;">
+      <select class="type-select" data-role="payment" title="Mode de paiement">
+        <option value="cash">💵 Comptant</option>
+        <option value="carte" selected>💳 Carte</option>
+      </select>
+      <input class="qty-input" data-role="qty" type="number" min="1" value="1">
+      <button class="add-btn" data-role="add" type="button">+ Ajouter</button>
+    </div>
+  </div>`;
+}
+
+function cartLine(l, i){
+  return `
+  <div class="cart-line">
+    <div>
+      <div class="cl-name">${familyDot(l.num)}<span class="p-num" style="font-weight:700;">#${l.num}</span> ${escapeHtml(l.name)}</div>
+      <div class="cl-meta">${l.qty} × ${TYPE_LABELS[l.type]} (${fmtMoney(l.unitPrice)}) · ${l.payment === 'carte' ? '💳 Carte' : '💵 Comptant'}</div>
+    </div>
+    <div style="display:flex; align-items:center; gap:8px;">
+      <span class="cl-total">${fmtMoney(l.total)}</span>
+      <button class="cart-remove" data-idx="${i}" data-role="remove" type="button" aria-label="Retirer">✕</button>
+    </div>
+  </div>`;
+}
+
+/* ============================= STOCK ============================= */
+function renderStock(){
+  const full = S.settings.volumeBouteille || FULL_BOTTLE_ML;
+  const q = S.stockQuery.trim().toLowerCase();
+  const source = S.showRemoved ? CATALOG : PRODUCTS;
+  let list = source.map(p => ({...p, st: S.stock[p.num] || {ml:full, sold:0}}));
+  if(q) list = list.filter(p => p.name.toLowerCase().includes(q) || p.maison.toLowerCase().includes(q) || String(p.num)===q);
+  if(S.stockFilter !== 'all') list = list.filter(p => statusOf(p.st.ml) === S.stockFilter);
+  if(S.stockFamily !== 'all') list = list.filter(p => familyOf(p.num).key === S.stockFamily);
+
+  if(S.stockSort === 'name') list.sort((a,b) => a.name.localeCompare(b.name));
+  else if(S.stockSort === 'stock-asc') list.sort((a,b) => a.st.ml - b.st.ml);
+  else if(S.stockSort === 'stock-desc') list.sort((a,b) => b.st.ml - a.st.ml);
+
+  const counts = { ok:0, attention:0, urgent:0 };
+  PRODUCTS.forEach(p => counts[statusOf((S.stock[p.num]||{ml:full}).ml)]++);
+  const removedCount = CATALOG.length - PRODUCTS.length;
+
+  return `
+  <div class="panel">
+    <div class="panel-header">
+      <h2 class="panel-title">Inventaire du stock</h2>
+      <span class="panel-sub">Bouteille de remplissage ${S.settings.volumeBouteille} ml · vente de ${S.settings.volumeVente} ml</span>
+    </div>
+    <div class="panel-body">
+      <div class="search-bar">
+        <span class="ic">🔍</span>
+        <input id="stock-search" type="text" placeholder="Chercher par nom, maison ou numéro…" value="${escapeHtml(S.stockQuery)}">
+      </div>
+      <div class="filter-chips">
+        <button class="chip ${S.stockFilter==='all'?'active':''}" data-filter="all" type="button">Tous (${PRODUCTS.length})</button>
+        <button class="chip ${S.stockFilter==='ok'?'active':''}" data-filter="ok" type="button">✅ OK (${counts.ok})</button>
+        <button class="chip ${S.stockFilter==='attention'?'active':''}" data-filter="attention" type="button">🟠 Attention (${counts.attention})</button>
+        <button class="chip ${S.stockFilter==='urgent'?'active':''}" data-filter="urgent" type="button">🔴 Urgent (${counts.urgent})</button>
+        <select id="stock-sort" style="margin-left:auto; padding:5px 8px; border:1px solid var(--line); border-radius:20px; font-size:0.76rem;">
+          <option value="name" ${S.stockSort==='name'?'selected':''}>Trier : Nom (A–Z)</option>
+          <option value="stock-asc" ${S.stockSort==='stock-asc'?'selected':''}>Trier : Stock (bas → haut)</option>
+          <option value="stock-desc" ${S.stockSort==='stock-desc'?'selected':''}>Trier : Stock (haut → bas)</option>
+        </select>
+      </div>
+      <div class="filter-chips">
+        <button class="chip ${S.stockFamily==='all'?'active':''}" data-family="all" type="button">Toutes les familles</button>
+        ${FAMILIES.map(f => `<button class="chip ${S.stockFamily===f.key?'active':''}" data-family="${f.key}" type="button" style="${S.stockFamily===f.key?`background:${f.color};border-color:${f.color};color:#fff;`:''}">${familyDot(f.min)}${f.label} (#${f.min}–${f.max})</button>`).join('')}
+      </div>
+      <div class="filter-chips">
+        <button class="chip ${S.showRemoved?'active':''}" id="toggle-removed" type="button">🗑 Afficher les parfums retirés (${removedCount})</button>
+      </div>
+      <div style="margin-bottom:14px; display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+        <button class="btn secondary small" id="toggle-add-product" type="button">${S.addProductOpen ? '✕ Annuler' : '+ Ajouter un parfum'}</button>
+        <button class="btn gold small" id="restock-all" type="button">↻ Remettre tous les parfums à ${full} ml</button>
+        <span class="hint">Réinitialise les niveaux de stock (garde l'historique des ventes intact).</span>
+      </div>
+      ${S.addProductOpen ? addProductForm() : ''}
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Parfum</th><th>Maison</th><th></th><th class="right">Stock</th><th class="right">Vendu (total)</th><th>Statut</th><th></th><th></th></tr></thead>
+          <tbody id="stock-tbody">
+            ${list.length ? list.map(p => stockRow(p)).join('') : `<tr><td colspan="8"><div class="empty-state">Aucun parfum ne correspond à ce filtre.</div></td></tr>`}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>`;
+}
+
+function addProductForm(){
+  return `
+  <div class="restock-box" style="border-color:var(--wine); margin-bottom:14px;">
+    <div class="rb-label">Nouveau parfum — un numéro (#${nextCatalogNum()}) lui sera attribué automatiquement.</div>
+    <input type="text" id="new-product-name" class="date-input" style="flex:1; min-width:160px;" placeholder="Nom du parfum">
+    <input type="text" id="new-product-maison" class="date-input" style="flex:1; min-width:140px;" placeholder="Maison">
+    <select id="new-product-family" class="date-input" style="min-width:140px;">
+      ${FAMILIES.map(f => `<option value="${f.key}">${f.label}</option>`).join('')}
+    </select>
+    <button class="btn small" id="confirm-add-product" type="button">+ Ajouter</button>
+  </div>`;
+}
+
+function stockRow(p){
+  const open = S.restockOpenNum === p.num;
+  p.st = p.st || {ml: S.settings.volumeBouteille || FULL_BOTTLE_ML, sold: 0};
+  const removed = !!p.removed;
+  return `
+    <tr style="${removed ? 'opacity:0.55;' : ''}">
+      <td>${familyDot(p.num)}<span class="num-cell">#${p.num}</span> ${escapeHtml(p.name)} ${removed ? '<span class="status-pill status-urgent" style="margin-left:6px;">Retiré</span>' : ''}</td>
+      <td>${escapeHtml(p.maison)}</td>
+      <td class="bottle-cell">${bottleGauge(p.st.ml)}</td>
+      <td class="right mono">${p.st.ml} ml</td>
+      <td class="right mono">${p.st.sold} un.</td>
+      <td>${statusPill(statusOf(p.st.ml))}</td>
+      <td>${removed ? '' : `<button class="restock-btn" data-role="restock-toggle" data-num="${p.num}" type="button">↻ Réappro</button>`}</td>
+      <td>${removed
+        ? `<button class="restock-btn" data-role="reactivate" data-num="${p.num}" type="button" style="color:var(--sage);">↺ Réactiver</button>`
+        : `<button class="restock-btn" data-role="remove-product" data-num="${p.num}" type="button" style="color:var(--red);">🗑 Retirer</button>`}</td>
+    </tr>
+    ${open ? `<tr><td colspan="8" style="border-bottom:1px solid var(--line);">${restockBox(p)}</td></tr>` : ''}
+  `;
+}
+
+function restockBox(p){
+  return `
+  <div class="restock-box" data-num="${p.num}">
+    <div class="rb-label">Réapprovisionner <strong>${escapeHtml(p.name)}</strong> — stock actuel : ${p.st.ml} ml</div>
+    <button class="btn gold small" data-role="restock-full" data-num="${p.num}" type="button">+ Bouteille pleine (+${S.settings.volumeBouteille} ml)</button>
+    <input type="number" min="1" class="date-input" style="width:90px;" placeholder="ml" id="restock-custom-${p.num}">
+    <button class="btn secondary small" data-role="restock-add" data-num="${p.num}" type="button">+ Ajouter</button>
+    <button class="btn ghost small" data-role="restock-replace" data-num="${p.num}" type="button">Remplacer à neuf (${S.settings.volumeBouteille} ml)</button>
+    <button class="btn ghost small" data-role="restock-close" type="button">Fermer</button>
+  </div>`;
+}
+
+/* ============================= DASHBOARD ============================= */
+function renderDashboard(){
+  const today = todayISO();
+  const cmk = currentMonthKey();
+  const curSales = S.salesByMonth[cmk] || [];
+  const salesToday = curSales.filter(s => s.date === today);
+  const unitsToday = salesToday.reduce((a,s) => a + s.qty, 0);
+  const revenueToday = salesToday.reduce((a,s) => a + s.total, 0);
+  const byType = {R:0,P:0,F:0,X:0};
+  salesToday.forEach(s => byType[s.type] += s.total);
+
+  const monthStats = S.summary.months[cmk] || {units:0, revenue:0, byType:{R:0,P:0,F:0,X:0}};
+  const totalUnitsAllTime = Object.values(S.stock).reduce((a,s) => a + (s.sold||0), 0);
+  // Moyenne calculée sur l'ensemble des ventes du mois, divisée par le nombre de jours
+  // où il y a effectivement eu au moins une vente (plus représentatif que les jours fermés).
+  const daysWithSalesThisMonth = Object.keys(S.summary.days).filter(d => d.startsWith(cmk) && S.summary.days[d].units > 0).length;
+  const avgDivisor = Math.max(1, daysWithSalesThisMonth);
+  const avgRevenuePerDay = monthStats.revenue / avgDivisor;
+  const avgUnitsPerDay = monthStats.units / avgDivisor;
+
+  // Semaine en cours (lundi à dimanche)
+  const [weekStart, weekEnd] = getWeekRange(today);
+  const weekSales = [...(S.salesByMonth[cmk]||[]), ...(S.salesByMonth[shiftMonthKey(cmk,-1)]||[])]
+    .filter(s => s.date >= weekStart && s.date <= weekEnd);
+  const byTypeWeek = {R:0,P:0,F:0,X:0};
+  weekSales.forEach(s => byTypeWeek[s.type] += s.total);
+  const byPaymentWeek = {cash:0, carte:0};
+  weekSales.forEach(s => { byPaymentWeek[s.payment === 'carte' ? 'carte' : 'cash'] += s.total; });
+  const weekUnits = weekSales.reduce((a,s) => a+s.qty, 0);
+  const weekRevenue = weekSales.reduce((a,s) => a+s.total, 0);
+
+  const alerts = PRODUCTS.map(p => ({...p, st: S.stock[p.num] || {ml: S.settings.volumeBouteille || FULL_BOTTLE_ML, sold:0}}))
+    .filter(p => statusOf(p.st.ml) !== 'ok')
+    .sort((a,b) => a.st.ml - b.st.ml);
+
+  // Tendance mensuelle (12 derniers mois)
+  const months = [];
+  for(let i = 11; i >= 0; i--) months.push(shiftMonthKey(cmk, -i));
+  const maxRevenue = Math.max(1, ...months.map(mk => (S.summary.months[mk] && S.summary.months[mk].revenue) || 0));
+
+  // Ventes par jour de semaine (agrégées sur toutes les données connues)
+  const weekdayTotals = [0,0,0,0,0,0,0];
+  Object.entries(S.summary.days).forEach(([date, d]) => {
+    const wd = new Date(date + 'T12:00:00').getDay();
+    weekdayTotals[wd] += d.revenue;
+  });
+  const maxWeekday = Math.max(1, ...weekdayTotals);
+
+  // Top ventes ce mois
+  const monthSoldMap = {};
+  curSales.forEach(s => { monthSoldMap[s.num] = (monthSoldMap[s.num]||0) + s.qty; });
+  const topMonth = Object.entries(monthSoldMap).sort((a,b) => b[1]-a[1]).slice(0,5)
+    .map(([num, qty]) => ({...PRODUCT_BY_NUM[num], qty}));
+
+  // Top ventes cette semaine
+  const weekSoldMap = {};
+  weekSales.forEach(s => { weekSoldMap[s.num] = (weekSoldMap[s.num]||0) + s.qty; });
+  const topWeek = Object.entries(weekSoldMap).sort((a,b) => b[1]-a[1]).slice(0,5)
+    .map(([num, qty]) => ({...PRODUCT_BY_NUM[num], qty}));
+
+  return `
+  <div class="kpi-row">
+    <div class="kpi"><div class="k-label">Aujourd'hui</div><div class="k-value">${fmtMoney(revenueToday)}</div><div class="k-sub">${unitsToday} unité${unitsToday>1?'s':''} vendue${unitsToday>1?'s':''}</div></div>
+    <div class="kpi accent"><div class="k-label">Ce mois-ci</div><div class="k-value">${fmtMoney(monthStats.revenue)}</div><div class="k-sub">${monthStats.units} unité${monthStats.units>1?'s':''} · ${monthLabel(cmk)}</div></div>
+    <div class="kpi"><div class="k-label">Moyenne $ / jour</div><div class="k-value">${fmtMoney(avgRevenuePerDay)}</div><div class="k-sub">sur ${daysWithSalesThisMonth} jour${daysWithSalesThisMonth>1?'s':''} de vente ce mois-ci</div></div>
+    <div class="kpi"><div class="k-label">Moyenne unités / jour</div><div class="k-value">${avgUnitsPerDay.toFixed(1)}</div><div class="k-sub">sur ${daysWithSalesThisMonth} jour${daysWithSalesThisMonth>1?'s':''} de vente ce mois-ci</div></div>
+    <div class="kpi"><div class="k-label">Alertes de stock</div><div class="k-value" style="color:${alerts.length?'var(--red)':'var(--sage)'}">${alerts.length}</div><div class="k-sub">à surveiller</div></div>
+    <div class="kpi"><div class="k-label">Total historique</div><div class="k-value">${totalUnitsAllTime}</div><div class="k-sub">unités vendues au total</div></div>
+  </div>
+
+  <div class="grid-2 even">
+    <div class="panel">
+      <div class="panel-header"><h2 class="panel-title">Tendance mensuelle — chiffre d'affaires</h2></div>
+      <div class="panel-body">
+        <div class="chart-bars">
+          ${months.map(mk => {
+            const rev = (S.summary.months[mk] && S.summary.months[mk].revenue) || 0;
+            const h = Math.round((rev / maxRevenue) * 130) || 2;
+            const isCur = mk === cmk;
+            return `<div class="chart-bar-col">
+              <div class="chart-value">${rev ? Math.round(rev) : ''}</div>
+              <div class="chart-bar ${isCur?'current':''}" style="height:${h}px;" title="${monthLabel(mk)} — ${fmtMoney(rev)}"></div>
+              <div class="chart-label">${monthLabel(mk)}</div>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header"><h2 class="panel-title">Ventes par jour de semaine</h2></div>
+      <div class="panel-body">
+        <div class="weekday-chart">
+          ${[1,2,3,4,5,6,0].map(wd => {
+            const val = weekdayTotals[wd];
+            const h = Math.round((val / maxWeekday) * 90) || 2;
+            return `<div class="chart-bar-col">
+              <div class="chart-value">${val ? Math.round(val) : ''}</div>
+              <div class="chart-bar" style="height:${h}px;" title="${WEEKDAY_LABELS[wd]} — ${fmtMoney(val)}"></div>
+              <div class="chart-label">${WEEKDAY_LABELS[wd]}</div>
+            </div>`;
+          }).join('')}
+        </div>
+        <div class="hint">Basé sur l'historique complet des ventes enregistrées.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="panel">
+      <div class="panel-header"><h2 class="panel-title">Alertes de réapprovisionnement</h2></div>
+      <div class="panel-body">
+        ${alerts.length ? `
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th></th><th>Parfum</th><th>Maison</th><th class="right">Stock</th><th>Statut</th></tr></thead>
+            <tbody>
+              ${alerts.map(p => `<tr><td>${bottleGauge(p.st.ml)}</td><td>${familyDot(p.num)}<span class="num-cell">#${p.num}</span> ${escapeHtml(p.name)}</td><td>${escapeHtml(p.maison)}</td><td class="right mono">${p.st.ml} ml</td><td>${statusPill(statusOf(p.st.ml))}</td></tr>`).join('')}
+            </tbody>
+          </table>
+        </div>` : `<div class="empty-state"><div class="es-title">Tout est sous contrôle</div>Aucun parfum n'a besoin de réapprovisionnement.</div>`}
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">
+        <h2 class="panel-title">Répartition de la semaine</h2>
+        <span class="panel-sub">${fmtDayMonth(weekStart)} – ${fmtDayMonth(weekEnd)} · ${weekUnits} un. · ${fmtMoney(weekRevenue)}</span>
+      </div>
+      <div class="panel-body">
+        ${['R','P','F','X'].map(t => `
+          <div style="display:flex; justify-content:space-between; padding:7px 0; border-bottom:1px dashed var(--line); font-size:0.85rem;">
+            <span style="color:${TYPE_COLORS[t]}; font-weight:600;">${TYPE_LABELS[t]}</span>
+            <span class="mono">${fmtMoney(byTypeWeek[t])}</span>
+          </div>`).join('')}
+        <div style="display:flex; justify-content:space-between; padding:10px 0 0; font-size:0.85rem;">
+          <span>💵 Comptant</span><span class="mono">${fmtMoney(byPaymentWeek.cash)}</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; padding:5px 0 0; font-size:0.85rem;">
+          <span>💳 Carte</span><span class="mono">${fmtMoney(byPaymentWeek.carte)}</span>
+        </div>
+        <div style="margin-top:18px; display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+          <div>
+            <div class="panel-sub" style="margin-bottom:8px;">Meilleures ventes — mois</div>
+            ${topMonth.length ? topMonth.map(p => `<div style="display:flex; justify-content:space-between; padding:5px 0; font-size:0.82rem;"><span>${familyDot(p.num)}${escapeHtml(p.name)}</span><span class="mono">${p.qty}</span></div>`).join('') : `<div class="note-line">Aucune vente ce mois.</div>`}
+          </div>
+          <div>
+            <div class="panel-sub" style="margin-bottom:8px;">Meilleures ventes — semaine</div>
+            ${topWeek.length ? topWeek.map(p => `<div style="display:flex; justify-content:space-between; padding:5px 0; font-size:0.82rem;"><span>${familyDot(p.num)}${escapeHtml(p.name)}</span><span class="mono">${p.qty}</span></div>`).join('') : `<div class="note-line">Aucune vente cette semaine.</div>`}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ============================= HISTORIQUE ============================= */
+function availableMonths(){
+  const cmk = currentMonthKey();
+  const set = new Set(Object.keys(S.summary.months));
+  for(let i = 0; i < 12; i++) set.add(shiftMonthKey(cmk, -i));
+  return Array.from(set).sort().reverse();
+}
+
+function renderHistorique(){
+  const mk = S.histMonth || currentMonthKey();
+  let list = [...(S.salesByMonth[mk] || [])].sort((a,b) => (b.date+b.time).localeCompare(a.date+a.time));
+  if(S.histDay) list = list.filter(s => s.date === S.histDay);
+  const total = list.reduce((a,s) => a+s.total, 0);
+  const units = list.reduce((a,s) => a+s.qty, 0);
+  const months = availableMonths();
+
+  return `
+  <div class="panel">
+    <div class="panel-header">
+      <h2 class="panel-title">Historique des ventes</h2>
+      <span class="panel-sub">${list.length} vente${list.length>1?'s':''} · ${units} un. · ${fmtMoney(total)}</span>
+    </div>
+    <div class="panel-body">
+      <div style="display:flex; gap:8px; align-items:center; margin-bottom:14px; flex-wrap:wrap;">
+        <select id="hist-month" class="month-select">
+          ${months.map(m => `<option value="${m}" ${m===mk?'selected':''}>${monthLabel(m)} — ${m}</option>`).join('')}
+        </select>
+        <input type="date" id="hist-date" class="date-input" value="${S.histDay}">
+        ${S.histDay ? `<button class="btn ghost small" id="hist-clear" type="button">Tout le mois</button>` : ''}
+        ${S.histLoading ? `<span class="hint">Chargement du mois…</span>` : ''}
+        <button class="btn secondary small" id="export-history-csv" type="button" style="margin-left:auto;">⬇ Enregistrer tout l'historique sur mon ordinateur (CSV)</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Date</th><th>Heure</th><th>Parfum</th><th>Maison</th><th>Type</th><th>Paiement</th><th class="right">Qté</th><th class="right">Prix</th><th class="right">Total</th><th>Note</th><th></th></tr></thead>
+          <tbody>
+            ${list.length ? list.map(s => `
+              <tr>
+                <td class="mono">${fmtDateFR(s.date)}</td>
+                <td class="mono">${s.time||''}</td>
+                <td>${familyDot(s.num)}<span class="num-cell">#${s.num}</span> ${escapeHtml(s.name)}</td>
+                <td>${escapeHtml(s.maison)}</td>
+                <td><span style="color:${TYPE_COLORS[s.type]}; font-weight:600;">${TYPE_LABELS[s.type]}</span></td>
+                <td>${s.payment === 'carte' ? '💳' : '💵'} ${PAYMENT_LABELS[s.payment] || 'Comptant'}</td>
+                <td class="right mono">${s.qty}</td>
+                <td class="right mono">${fmtMoney(s.unitPrice)}</td>
+                <td class="right mono">${fmtMoney(s.total)}</td>
+                <td class="note-line">${escapeHtml(s.note||'')}</td>
+                <td><button class="cart-remove" data-role="undo" data-id="${s.id}" type="button" title="Annuler cette vente et restituer le stock">↺</button></td>
+              </tr>`).join('') : `<tr><td colspan="11"><div class="empty-state"><div class="es-title">Aucune vente</div>Rien à afficher pour cette période.</div></td></tr>`}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ============================= REGLAGES ============================= */
+function renderReglages(){
+  const s = S.settings;
+  return `
+  <div class="panel">
+    <div class="panel-header"><h2 class="panel-title">Réglages de la boutique</h2></div>
+    <div class="panel-body">
+      <div class="settings-grid">
+        <div class="section-label">Prix de vente</div>
+        <div class="field"><label>Prix régulier ($ / 50 ml)</label><input type="number" min="0" step="0.5" id="set-prixRegulier" value="${s.prixRegulier}"></div>
+        <div class="field"><label>Prix promo ($ / 50 ml)</label><input type="number" min="0" step="0.5" id="set-prixPromo" value="${s.prixPromo}"></div>
+        <div class="field"><label>Prix fidèle / famille ($)</label><input type="number" min="0" step="0.5" id="set-prixFidele" value="${s.prixFidele}"></div>
+        <div></div>
+
+        <div class="section-label">Bouteille de remplissage</div>
+        <div class="field"><label>Volume bouteille fournisseur (ml)</label><input type="number" min="1" id="set-volumeBouteille" value="${s.volumeBouteille}"></div>
+        <div class="field"><label>Volume par vente (ml)</label><input type="number" min="1" id="set-volumeVente" value="${s.volumeVente}"></div>
+
+        <div class="section-label">Seuils de réapprovisionnement</div>
+        <div class="field"><label>Seuil URGENT (ml)</label><input type="number" min="0" id="set-seuilUrgent" value="${s.seuilUrgent}"></div>
+        <div class="field"><label>Seuil ATTENTION (ml)</label><input type="number" min="0" id="set-seuilAttention" value="${s.seuilAttention}"></div>
+      </div>
+      <button class="btn" id="save-settings" type="button" style="margin-top:8px;">Enregistrer les réglages</button>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-header"><h2 class="panel-title">Sauvegarde des données</h2></div>
+    <div class="panel-body">
+      <div class="info-box">Les ventes sont enregistrées mois par mois dans l'espace partagé, ce qui limite les risques de perte de données. Enregistrez régulièrement une copie sur votre ordinateur — surtout avant une longue période sans connexion, ou si vous utilisez l'application hors de Claude.</div>
+      <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+        <button class="btn secondary" id="export-backup" type="button">⬇ Sauvegarde complète (JSON — stock, ventes, réglages)</button>
+        <label class="file-label" for="import-file">⬆ Importer une sauvegarde</label>
+        <input type="file" id="import-file" accept="application/json" style="display:none;">
+      </div>
+      <div class="hint">Pour un fichier lisible dans Excel avec seulement les ventes, utilisez le bouton « Enregistrer tout l'historique » dans l'onglet Historique.</div>
+    </div>
+  </div>
+
+  <div class="panel" style="border-color:var(--red);">
+    <div class="panel-header"><h2 class="panel-title" style="color:var(--red);">Zone de danger</h2></div>
+    <div class="panel-body">
+      <div class="warn-box">Cette action réinitialise le stock à ses niveaux d'origine et efface tout l'historique des ventes pour <strong>toutes les personnes</strong> qui utilisent cette application. Exportez une sauvegarde avant, si vous voulez pouvoir revenir en arrière.</div>
+      <button class="btn danger" id="reset-data" type="button">Réinitialiser le stock et l'historique</button>
+    </div>
+  </div>`;
+}
+
+/* ============================= EVENTS ============================= */
+function bindTabEvents(){
+  if(S.tab === 'caisse') bindCaisse();
+  else if(S.tab === 'stock') bindStock();
+  else if(S.tab === 'historique') bindHistorique();
+  else if(S.tab === 'reglages') bindReglages();
+}
+
+function focusEnd(id){
+  const el = document.getElementById(id);
+  if(el){ el.focus(); const v = el.value; el.value=''; el.value=v; }
+}
+
+function bindCaisse(){
+  document.getElementById('caisse-search').addEventListener('input', e => { S.caisseQuery = e.target.value; render(); focusEnd('caisse-search'); });
+  document.getElementById('caisse-date').addEventListener('change', e => { S.caisseDate = e.target.value; });
+  const noteEl = document.getElementById('caisse-note');
+  if(noteEl) noteEl.addEventListener('input', e => { S.caisseNote = e.target.value; });
+
+  document.querySelectorAll('.product-row').forEach(row => {
+    const num = parseInt(row.dataset.num);
+    const typeSel = row.querySelector('[data-role="type"]');
+    const persoInput = row.querySelector('[data-role="perso"]');
+    typeSel.addEventListener('change', () => { persoInput.style.display = typeSel.value === 'X' ? 'inline-block' : 'none'; });
+    row.querySelector('[data-role="add"]').addEventListener('click', () => addToCart(num, row));
+  });
+  document.querySelectorAll('[data-role="remove"]').forEach(btn => {
+    btn.addEventListener('click', () => { S.cart.splice(parseInt(btn.dataset.idx), 1); render(); });
+  });
+  const clearBtn = document.getElementById('clear-cart');
+  if(clearBtn) clearBtn.addEventListener('click', () => { S.cart = []; render(); });
+  const commitBtn = document.getElementById('commit-sale');
+  if(commitBtn) commitBtn.addEventListener('click', commitSale);
+}
+
+function addToCart(num, row){
+  const p = PRODUCT_BY_NUM[num];
+  const type = row.querySelector('[data-role="type"]').value;
+  const payment = row.querySelector('[data-role="payment"]').value;
+  const qty = Math.max(1, parseInt(row.querySelector('[data-role="qty"]').value) || 1);
+  let unitPrice;
+  if(type === 'R') unitPrice = S.settings.prixRegulier;
+  else if(type === 'P') unitPrice = S.settings.prixPromo;
+  else if(type === 'F') unitPrice = S.settings.prixFidele;
+  else {
+    unitPrice = parseFloat(row.querySelector('[data-role="perso"]').value);
+    if(!unitPrice && unitPrice !== 0){ toast('Entrez un prix personnalisé.'); return; }
+  }
+  const curMl = (S.stock[num] || {ml: S.settings.volumeBouteille || FULL_BOTTLE_ML}).ml;
+  const neededMl = qty * S.settings.volumeVente;
+  if(neededMl > curMl) toast(`Stock insuffisant pour ${p.name} (${curMl} ml restant).`);
+  S.cart.push({ num, name: p.name, maison: p.maison, type, payment, qty, unitPrice, total: qty * unitPrice });
+  render();
+}
+
+async function commitSale(){
+  if(!S.cart.length) return;
+  const date = S.caisseDate || todayISO();
+  const time = nowTime();
+  const note = S.caisseNote || '';
+  const mk = monthKey(date);
+  const cartCopy = S.cart.map(l => ({...l}));
+  const recs = cartCopy.map(l => ({ id: uid(), date, time, num: l.num, name: l.name, maison: l.maison, type: l.type, qty: l.qty, unitPrice: l.unitPrice, total: l.total, note, payment: l.payment || 'cash' }));
+
+  S.cart = [];
+  S.caisseNote = '';
+  render();
+
+  try{
+    await mutateMonthSales(mk, arr => { recs.forEach(r => arr.push(r)); });
+    await mutateStock(stock => {
+      cartCopy.forEach(l => {
+        const cur = stock[l.num] || {ml: S.settings.volumeBouteille || FULL_BOTTLE_ML, sold:0};
+        cur.ml = Math.max(0, cur.ml - l.qty * S.settings.volumeVente);
+        cur.sold = (cur.sold||0) + l.qty;
+        stock[l.num] = cur;
+      });
+    });
+    await mutateSummary(summary => { cartCopy.forEach(l => addToSummary(summary, date, l.qty, l.total, l.type)); });
+    S.lastSync = new Date(); updateSyncLabel();
+    await writeLocalFile();
+    await downloadSaleBackupJSON();
+    toast(`Vente enregistrée · ${cartCopy.length} article${cartCopy.length>1?'s':''}`);
+    render();
+  }catch(e){
+    toast('Erreur d\u2019enregistrement — vérifiez la connexion et réessayez.');
+  }
+}
+
+function bindStock(){
+  document.getElementById('stock-search').addEventListener('input', e => { S.stockQuery = e.target.value; render(); focusEnd('stock-search'); });
+  document.querySelectorAll('[data-filter]').forEach(chip => chip.addEventListener('click', () => { S.stockFilter = chip.dataset.filter; render(); }));
+  document.querySelectorAll('[data-family]').forEach(chip => chip.addEventListener('click', () => { S.stockFamily = chip.dataset.family; render(); }));
+  document.getElementById('stock-sort').addEventListener('change', e => { S.stockSort = e.target.value; render(); });
+
+  const restockAllBtn = document.getElementById('restock-all');
+  if(restockAllBtn) restockAllBtn.addEventListener('click', restockAll);
+
+  const toggleRemovedBtn = document.getElementById('toggle-removed');
+  if(toggleRemovedBtn) toggleRemovedBtn.addEventListener('click', () => { S.showRemoved = !S.showRemoved; render(); });
+
+  const toggleAddBtn = document.getElementById('toggle-add-product');
+  if(toggleAddBtn) toggleAddBtn.addEventListener('click', () => { S.addProductOpen = !S.addProductOpen; render(); });
+
+  const confirmAddBtn = document.getElementById('confirm-add-product');
+  if(confirmAddBtn) confirmAddBtn.addEventListener('click', () => {
+    const name = document.getElementById('new-product-name').value.trim();
+    const maison = document.getElementById('new-product-maison').value.trim();
+    const family = document.getElementById('new-product-family').value;
+    if(!name){ toast('Entrez un nom de parfum.'); return; }
+    S.addProductOpen = false;
+    addProduct(name, maison, family);
+  });
+
+  // Délégation d'événements sur le corps du tableau : fonctionne quel que soit
+  // le nombre de lignes ouvertes et évite les problèmes de liaison après un nouveau rendu.
+  const tbody = document.getElementById('stock-tbody');
+  if(!tbody) return;
+  tbody.addEventListener('click', e => {
+    const btn = e.target.closest('[data-role]');
+    if(!btn) return;
+    const role = btn.dataset.role;
+    const num = parseInt(btn.dataset.num);
+
+    if(role === 'restock-toggle'){
+      S.restockOpenNum = S.restockOpenNum === num ? null : num;
+      render();
+    } else if(role === 'restock-close'){
+      S.restockOpenNum = null;
+      render();
+    } else if(role === 'restock-full'){
+      doRestock(num, 'add', S.settings.volumeBouteille || FULL_BOTTLE_ML);
+    } else if(role === 'restock-replace'){
+      doRestock(num, 'set', S.settings.volumeBouteille || FULL_BOTTLE_ML);
+    } else if(role === 'restock-add'){
+      const input = document.getElementById('restock-custom-' + num);
+      const val = input ? parseFloat(input.value) : NaN;
+      if(!val || val <= 0){ toast('Entrez une quantité en ml valide.'); return; }
+      doRestock(num, 'add', val);
+    } else if(role === 'remove-product'){
+      const p = PRODUCT_BY_NUM[num];
+      if(confirm(`Retirer « ${p ? p.name : '#'+num} » de la liste active ? L'historique des ventes est conservé, et vous pourrez le réactiver plus tard.`)){
+        setProductRemoved(num, true);
+      }
+    } else if(role === 'reactivate'){
+      setProductRemoved(num, false);
+    }
+  });
+}
+
+async function doRestock(num, mode, amount){
+  const full = S.settings.volumeBouteille || FULL_BOTTLE_ML;
+  // Mise à jour optimiste immédiate à l'écran, confirmée ensuite par la sauvegarde.
+  const localCur = S.stock[num] || {ml: full, sold: 0};
+  localCur.ml = mode === 'add' ? localCur.ml + amount : amount;
+  S.stock[num] = localCur;
+  S.restockOpenNum = null;
+  render();
+
+  try{
+    await mutateStock(stock => {
+      const cur = stock[num] || {ml: full, sold:0};
+      cur.ml = mode === 'add' ? cur.ml + amount : amount;
+      stock[num] = cur;
+    });
+    S.lastSync = new Date(); updateSyncLabel();
+    await writeLocalFile();
+    render();
+    toast(`Stock mis à jour · ${PRODUCT_BY_NUM[num].name}`);
+  }catch(e){
+    toast('Erreur lors du réapprovisionnement — réessayez.');
+  }
+}
+
+async function restockAll(){
+  const full = S.settings.volumeBouteille || FULL_BOTTLE_ML;
+  if(!confirm(`Remettre le stock de tous les parfums à ${full} ml ? L'historique des ventes n'est pas touché.`)) return;
+  PRODUCTS.forEach(p => { S.stock[p.num] = {ml: full, sold: (S.stock[p.num]||{}).sold || 0}; });
+  render();
+  try{
+    await mutateStock(stock => { PRODUCTS.forEach(p => { const cur = stock[p.num] || {ml:full, sold:0}; cur.ml = full; stock[p.num] = cur; }); });
+    S.lastSync = new Date(); updateSyncLabel();
+    await writeLocalFile();
+    render();
+    toast(`Tous les parfums sont remis à ${full} ml.`);
+  }catch(e){
+    toast('Erreur lors de la réinitialisation du stock — réessayez.');
+  }
+}
+
+/* ---------- Gestion du catalogue : ajouter / retirer / réactiver un parfum ---------- */
+async function persistCatalog(){
+  if(typeof window.storage !== 'undefined'){
+    try{ await storSet('lf-catalog', CATALOG); }catch(e){ /* le fichier local prendra le relais */ }
+  }
+  await writeLocalFile();
+}
+
+async function addProduct(name, maison, familyKey){
+  const full = S.settings.volumeBouteille || FULL_BOTTLE_ML;
+  const num = nextCatalogNum();
+  const newProduct = { num, name: name.trim(), maison: (maison || '').trim(), family: familyKey, removed: false };
+  CATALOG = [...CATALOG, newProduct];
+  rebuildCatalogIndexes();
+  S.stock[num] = { ml: full, sold: 0 };
+  render();
+  try{
+    await mutateStock(stock => { stock[num] = { ml: full, sold: 0 }; });
+    await persistCatalog();
+    S.lastSync = new Date(); updateSyncLabel();
+    render();
+    toast(`Parfum ajouté · #${num} ${newProduct.name}`);
+  }catch(e){
+    toast("Erreur lors de l'ajout du parfum — réessayez.");
+  }
+}
+
+async function setProductRemoved(num, removed){
+  CATALOG = CATALOG.map(p => p.num === num ? {...p, removed} : p);
+  rebuildCatalogIndexes();
+  if(S.restockOpenNum === num) S.restockOpenNum = null;
+  render();
+  try{
+    await persistCatalog();
+    S.lastSync = new Date(); updateSyncLabel();
+    render();
+    toast(removed ? `Parfum retiré de la liste active.` : `Parfum réactivé.`);
+  }catch(e){
+    toast('Erreur lors de la mise à jour du catalogue — réessayez.');
+  }
+}
+
+function bindHistorique(){
+  document.getElementById('hist-month').addEventListener('change', async e => {
+    const mk = e.target.value;
+    S.histMonth = mk; S.histDay = '';
+    if(!S.salesByMonth[mk]){ S.histLoading = true; render(); await getMonthSales(mk); S.histLoading = false; }
+    render();
+  });
+  document.getElementById('hist-date').addEventListener('change', async e => {
+    const val = e.target.value;
+    if(!val){ S.histDay = ''; render(); return; }
+    const mk = monthKey(val);
+    S.histDay = val;
+    if(mk !== S.histMonth || !S.salesByMonth[mk]){
+      S.histMonth = mk; S.histLoading = true; render();
+      await getMonthSales(mk);
+      S.histLoading = false;
+    }
+    render();
+  });
+  const clearBtn = document.getElementById('hist-clear');
+  if(clearBtn) clearBtn.addEventListener('click', () => { S.histDay = ''; render(); });
+  document.querySelectorAll('[data-role="undo"]').forEach(btn => btn.addEventListener('click', () => undoSale(btn.dataset.id)));
+  const csvBtn = document.getElementById('export-history-csv');
+  if(csvBtn) csvBtn.addEventListener('click', exportHistoryCSV);
+}
+
+async function undoSale(id){
+  const mk = S.histMonth;
+  const arr = S.salesByMonth[mk] || [];
+  const sale = arr.find(s => s.id === id);
+  if(!sale) return;
+  if(!confirm('Annuler cette vente et restituer le stock correspondant ?')) return;
+  try{
+    await mutateMonthSales(mk, a => { const idx = a.findIndex(s => s.id === id); if(idx > -1) a.splice(idx, 1); });
+    await mutateStock(stock => {
+      const cur = stock[sale.num] || {ml: S.settings.volumeBouteille || FULL_BOTTLE_ML, sold:0};
+      cur.ml = Math.min(S.settings.volumeBouteille, cur.ml + sale.qty * S.settings.volumeVente);
+      cur.sold = Math.max(0, (cur.sold||0) - sale.qty);
+      stock[sale.num] = cur;
+    });
+    await mutateSummary(summary => subtractFromSummary(summary, sale.date, sale.qty, sale.total, sale.type));
+    S.lastSync = new Date(); updateSyncLabel();
+    await writeLocalFile();
+    render();
+    toast('Vente annulée, stock restitué.');
+  }catch(e){
+    toast('Erreur lors de l\u2019annulation — réessayez.');
+  }
+}
+
+function bindReglages(){
+  document.getElementById('save-settings').addEventListener('click', async () => {
+    const get = id => parseFloat(document.getElementById(id).value);
+    S.settings = {
+      prixRegulier: get('set-prixRegulier') || 0,
+      prixPromo: get('set-prixPromo') || 0,
+      prixFidele: get('set-prixFidele') || 0,
+      volumeBouteille: get('set-volumeBouteille') || 600,
+      volumeVente: get('set-volumeVente') || 50,
+      seuilUrgent: get('set-seuilUrgent') || 0,
+      seuilAttention: get('set-seuilAttention') || 0
+    };
+    await storSet('lf-settings', S.settings);
+    S.lastSync = new Date(); updateSyncLabel();
+    await writeLocalFile();
+    toast('Réglages enregistrés.');
+    render();
+  });
+
+  document.getElementById('reset-data').addEventListener('click', async () => {
+    if(!confirm("Réinitialiser le stock aux niveaux d'origine et effacer tout l'historique ? Cette action est irréversible pour tous les utilisateurs.")) return;
+    toast('Réinitialisation en cours…');
+    S.stock = defaultStock();
+    await storSet('lf-stock', S.stock);
+    S.summary = {months:{}, days:{}};
+    await storSet('lf-summary', S.summary);
+    const keys = await storList('lf-sales:');
+    await Promise.all(keys.map(k => storDelete(k)));
+    S.salesByMonth = {};
+    const cmk = currentMonthKey();
+    S.salesByMonth[cmk] = [];
+    S.salesByMonth[shiftMonthKey(cmk,-1)] = [];
+    S.histMonth = cmk; S.histDay = '';
+    S.lastSync = new Date(); updateSyncLabel();
+    await writeLocalFile();
+    render();
+    toast('Données réinitialisées.');
+  });
+
+  document.getElementById('export-backup').addEventListener('click', exportBackup);
+  document.getElementById('import-file').addEventListener('change', importBackup);
+}
+
+/* Assemble le jeu de données le plus complet possible : essaie le stockage partagé,
+   et retombe sur les données déjà en mémoire si celui-ci est indisponible ou vide,
+   pour que l'enregistrement local fonctionne même hors-ligne ou hors de Claude. */
+async function gatherFullData(){
+  let settings = S.settings, stock = S.stock, summary = S.summary, catalog = CATALOG;
+  let sales = {...S.salesByMonth};
+  let usedSharedStorage = false;
+
+  if(typeof window.storage !== 'undefined'){
+    try{
+      const [s2, st2, su2, cat2] = await Promise.all([storGet('lf-settings'), storGet('lf-stock'), storGet('lf-summary'), storGet('lf-catalog')]);
+      if(s2) settings = s2;
+      if(cat2){ catalog = normalizeCatalog(cat2); usedSharedStorage = true; }
+      if(st2){ stock = normalizeStock(st2); usedSharedStorage = true; }
+      if(su2){ summary = su2; usedSharedStorage = true; }
+      const keys = await storList('lf-sales:');
+      if(keys.length){
+        const entries = await Promise.all(keys.map(async k => [k.replace('lf-sales:',''), (await storGet(k)) || []]));
+        sales = Object.fromEntries(entries);
+        usedSharedStorage = true;
+      }
+    }catch(e){ /* on garde les données locales déjà en mémoire */ }
+  }
+  return { settings, stock, summary, sales, catalog, usedSharedStorage };
+}
+
+/* ---------- Fichier local (sauvegarde automatique sur cet ordinateur) ---------- */
+function supportsLocalFile(){ return typeof window.showSaveFilePicker === 'function'; }
+
+async function connectLocalFile(){
+  if(!supportsLocalFile()){
+    toast("Ce navigateur ne permet pas la connexion directe à un fichier — utilisez Exporter / Importer dans Réglages à la place.");
+    return;
+  }
+  try{
+    const handle = await window.showSaveFilePicker({
+      suggestedName: 'lafontaine-donnees.json',
+      types: [{ description: 'Données La Fontaine (JSON)', accept: {'application/json': ['.json']} }]
+    });
+    // Si le fichier choisi contient déjà des données (ex. reconnexion), on propose de les charger.
+    try{
+      const file = await handle.getFile();
+      if(file.size > 0){
+        const text = await file.text();
+        const data = JSON.parse(text);
+        if(data && data.stock && data.sales){
+          if(confirm("Ce fichier contient déjà des données La Fontaine. Les charger maintenant ? (remplace les données actuellement affichées)")){
+            S.settings = data.settings || {...DEFAULT_SETTINGS};
+            if(data.catalog){ CATALOG = normalizeCatalog(data.catalog); rebuildCatalogIndexes(); }
+            S.stock = normalizeStock(data.stock);
+            S.summary = data.summary || {months:{}, days:{}};
+            S.salesByMonth = {...data.sales};
+          }
+        }
+      }
+    }catch(readErr){ /* fichier vide, nouveau, ou illisible : on repart avec les données actuelles */ }
+
+    localFileHandle = handle;
+    S.localFileName = handle.name;
+    await writeLocalFile();
+    render();
+    toast(`Fichier local connecté : ${handle.name} — chaque changement s'y sauvegardera automatiquement.`);
+  }catch(e){
+    if(e && e.name !== 'AbortError') toast("Impossible de connecter un fichier local ici.");
+  }
+}
+
+async function writeLocalFile(){
+  if(!localFileHandle) return;
+  try{
+    const { settings, stock, summary, sales } = await gatherFullData();
+    const payload = { exportedAt: new Date().toISOString(), app: 'La Fontaine', settings, stock, summary, sales };
+    const writable = await localFileHandle.createWritable();
+    await writable.write(JSON.stringify(payload, null, 2));
+    await writable.close();
+    S.localFileSavedAt = new Date();
+    updateSyncLabel();
+  }catch(e){
+    toast("⚠️ Échec de la sauvegarde locale automatique — reconnectez le fichier via le bouton en haut.");
+    localFileHandle = null;
+    S.localFileName = null;
+    updateSyncLabel();
+  }
+}
+
+/* Enregistre automatiquement une copie JSON complète dans le dossier Téléchargements
+   du navigateur à chaque vente, en plus du fichier local connecté (s'il y en a un). */
+async function downloadSaleBackupJSON(){
+  try{
+    const { settings, stock, summary, sales, catalog } = await gatherFullData();
+    const payload = { exportedAt: new Date().toISOString(), app: 'La Fontaine', settings, stock, summary, sales, catalog };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], {type: 'application/json'});
+    const stamp = todayISO() + '-' + nowTime().replace(':', 'h');
+    downloadBlob(blob, `lafontaine-vente-${stamp}.json`);
+  }catch(e){ /* ne bloque pas la vente si le téléchargement échoue */ }
+}
+
+async function exportBackup(){
+  toast('Préparation de la sauvegarde…');
+  try{
+    const { settings, stock, summary, sales, catalog, usedSharedStorage } = await gatherFullData();
+    const payload = { exportedAt: new Date().toISOString(), app: 'La Fontaine', settings, stock, summary, sales, catalog };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], {type: 'application/json'});
+    downloadBlob(blob, `lafontaine-sauvegarde-${todayISO()}.json`);
+    toast(usedSharedStorage ? 'Sauvegarde téléchargée.' : 'Sauvegarde téléchargée (données de cette session seulement — stockage partagé indisponible).');
+  }catch(e){
+    toast('Erreur lors de la préparation de la sauvegarde.');
+  }
+}
+
+function downloadBlob(blob, filename){
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+function csvEscape(v){
+  const s = String(v == null ? '' : v);
+  return '"' + s.replace(/"/g, '""') + '"';
+}
+
+async function exportHistoryCSV(){
+  toast('Préparation de l\u2019historique…');
+  try{
+    const { sales, usedSharedStorage } = await gatherFullData();
+    const rows = [];
+    Object.values(sales).forEach(arr => arr.forEach(s => rows.push(s)));
+    rows.sort((a,b) => (a.date+a.time).localeCompare(b.date+b.time));
+
+    const header = ['Date','Heure','Numéro','Famille','Parfum','Maison','Type','Paiement','Quantité','Prix unitaire','Total','Note'];
+    const lines = [header.map(csvEscape).join(';')];
+    rows.forEach(s => {
+      lines.push([
+        s.date, s.time||'', s.num, familyOf(s.num).label, s.name, s.maison, TYPE_LABELS[s.type]||s.type,
+        PAYMENT_LABELS[s.payment] || 'Comptant', s.qty, (s.unitPrice||0).toFixed(2), (s.total||0).toFixed(2), s.note||''
+      ].map(csvEscape).join(';'));
+    });
+    // Point-virgule + BOM UTF-8 pour une ouverture propre dans Excel (accents, colonnes).
+    const csv = '\uFEFF' + lines.join('\r\n');
+    const blob = new Blob([csv], {type: 'text/csv;charset=utf-8'});
+    downloadBlob(blob, `lafontaine-historique-${todayISO()}.csv`);
+    toast(rows.length
+      ? (usedSharedStorage ? `Historique enregistré · ${rows.length} vente${rows.length>1?'s':''}.` : `Historique enregistré (session en cours seulement) · ${rows.length} vente${rows.length>1?'s':''}.`)
+      : 'Aucune vente à exporter pour le moment.');
+  }catch(e){
+    toast('Erreur lors de l\u2019export de l\u2019historique.');
+  }
+}
+
+async function importBackup(e){
+  const file = e.target.files[0];
+  if(!file) return;
+  try{
+    const text = await file.text();
+    const data = JSON.parse(text);
+    if(!data || !data.stock || !data.sales){ toast('Fichier de sauvegarde invalide.'); return; }
+    if(!confirm('Importer cette sauvegarde remplacera toutes les données actuelles pour tous les utilisateurs. Continuer ?')) return;
+    toast('Importation en cours…');
+    S.settings = data.settings || {...DEFAULT_SETTINGS};
+    if(data.catalog){ CATALOG = normalizeCatalog(data.catalog); rebuildCatalogIndexes(); }
+    S.stock = normalizeStock(data.stock);
+    S.summary = data.summary || {months:{}, days:{}};
+    S.salesByMonth = {...data.sales};
+    if(typeof window.storage !== 'undefined'){
+      try{
+        if(data.settings) await storSet('lf-settings', data.settings);
+        await storSet('lf-catalog', CATALOG);
+        await storSet('lf-stock', S.stock);
+        await storSet('lf-summary', S.summary);
+        for(const [mk, arr] of Object.entries(data.sales)){ await storSet('lf-sales:' + mk, arr); }
+        await loadAll();
+      }catch(err){ /* on garde au moins les données importées en mémoire */ }
+    }
+    await writeLocalFile();
+    render();
+    toast('Sauvegarde importée avec succès.');
+  }catch(err){
+    toast('Erreur : fichier illisible ou corrompu.');
+  }
+  e.target.value = '';
+}
+
+/* ============================= INIT ============================= */
+document.getElementById('refresh-btn').addEventListener('click', async () => {
+  if(typeof window.storage === 'undefined'){
+    toast('Aucun stockage partagé à actualiser ici — vos données restent celles de cette session / de votre fichier local.');
+    return;
+  }
+  toast('Actualisation…');
+  await loadAll();
+  render();
+  toast('Données à jour.');
+});
+document.getElementById('local-file-btn').addEventListener('click', connectLocalFile);
+
+(async function init(){
+  render();
+  if(typeof window.storage === 'undefined'){
+    const w = document.getElementById('storage-warning');
+    if(w) w.style.display = 'block';
+  }
+  await loadAll();
+  render();
+  setInterval(silentRefresh, 25000);
+})();
+</script>
+</body>
+</html>
