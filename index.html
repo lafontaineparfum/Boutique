@@ -199,6 +199,9 @@ tbody tr:hover{background:var(--panel-alt);}
 
 .file-label{display:inline-block;border:1px solid var(--wine);color:var(--wine);background:var(--panel);padding:9px 14px;border-radius:6px;font-weight:600;font-size:0.84rem;cursor:pointer;}
 .file-label:hover{background:var(--wine-bg);}
+.cat-row{display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:6px 8px;margin-bottom:6px;background:#fff;border:1px solid var(--line);border-left:6px solid var(--line);border-radius:6px;}
+.cat-in{min-width:0;padding:8px 9px;border:1px solid var(--line);border-radius:6px;background:#fff;font-size:0.88rem;color:var(--ink);}
+.cat-in:focus{outline:2px solid var(--gold);border-color:var(--gold);}
 </style>
 </head>
 <body>
@@ -229,34 +232,6 @@ tbody tr:hover{background:var(--panel-alt);}
 <script>
 /* ============================= DATA ============================= */
 const PRODUCTS_RAW = [[1, "Afternoon swim", "Louis Vuitton", 600], [2, "Aventus", "Creed", 500], [3, "Bal d'afrique", "Byredo", 550], [4, "Bleu", "Chanel", 600], [5, "Blue Talisman", "Ex Nihilo", 600], [6, "Elysium Pour Homme", "Roja", 600], [7, "Erba Gold", "Xerjoff", 500], [8, "Green Irish Tweed", "Creed", 550], [9, "Hacivat", "Nishane", 600], [10, "Imagination", "Louis Vuitton", 550], [11, "Le beau paradise garden", "Jean Paul Gauthier", 250], [12, "Megamar", "Orto Parisi", 600], [13, "Neroli Portofino", "Tom Ford", 500], [14, "Oceania", "Roja", 550], [15, "Pacific chill", "Louis Vuitton", 550], [16, "Sauvage", "Dior", 450], [17, "Silver Mountain Water", "Creed", 550], [18, "Symphony", "Louis Vuitton", 350], [19, "Torino21", "Xerjoff", 550], [20, "Vibrato", "Sospiro", 600], [21, "Althair", "Parfum de marly", 450], [22, "Amore Cafe", "Mancera", 600], [23, "Angel's Share", "Kilian", 400], [24, "Ani", "Nishane", 600], [25, "Bianco Latte", "Giardini Di Toscana", 450], [26, "Black Opium Baby Cat", "Yves Saint Laurent", 500], [27, "Black Phantom", "Kilian", 600], [28, "Escapade Gourmande", "Maison Mataha", 550], [29, "Grand Soir", "Maison Francis Kurkdjian", 500], [30, "Le Male Elixir", "Jean Paul Gauthier", 250], [31, "Lira", "Casamorati", 550], [32, "Musc Ravageur", "Frédérique Male", 600], [33, "Musc Therapy", "Initio", 600], [34, "Naxos", "Xerjoff", 600], [35, "Pegasus", "Parfum de marly", 550], [36, "Rose Vanille", "Mancera", 600], [37, "Spiritueuse Double Vanille", "Guerlain", 600], [38, "Stronger with you intensely", "Armani", 350], [39, "Vanilla 28", "Kayali", 500], [40, "Vanilla Powder", "Matière Première", 350], [41, "Alien", "Mugler", 600], [42, "Atomic Rose", "Initio", 550], [43, "Baccarat Rouge", "Maison Francis Kurkdjian", 550], [44, "Chance Eau Tendre", "Chanel", 550], [45, "Delina Exclusif", "Parfum de marly", 350], [46, "Eden Juicy Apple 01", "Kayali", 500], [47, "Gentle Fluidity Gold", "Maison Francis Kurkdjian", 500], [48, "Good Girl", "Carolina Herrera", 400], [49, "Guidance 46", "Amouage", 550], [50, "Hibiscus Mahajad", "Maison Creveli", 400], [51, "Almaz", "Kajal", 450], [52, "Libre Intense", "Yves Saint Laurent", 550], [53, "L'interdit Rouge", "Givenchy", 400], [54, "Love don't Be Shy", "Kilian", 600], [55, "Portrait of a lady", "Frédérique Male", 600], [56, "Pure musk for her", "Narciso Rodriguez", 500], [57, "Rouge Tarafalagar", "Dior", 550], [58, "Soleil Blanc", "Tom Ford", 550], [59, "Tilia", "Marc Antoine Barrois", 450], [60, "Valaya", "Parfum de marly", 500], [61, "Alexandria II", "Xerjoff", 600], [62, "Blonde Amber", "Clive Christian", 550], [63, "Bottled Absolut", "Hugo Boss", 600], [64, "Cedrat Boise", "Mancera", 600], [65, "Golden Dallah", "Xerjoff", 600], [66, "Gris Charnel Extrait", "BDK", 600], [67, "Halfeti", "Penhaligon's", 600], [68, "Haltane", "Parfum de marly", 600], [69, "Les Sables Roses", "Louis Vuitton", 450], [70, "Ombre Nomade", "Louis Vuitton", 550], [71, "Oud Cadenza", "Maison Creveli", 600], [72, "Oud for greatness", "Initio", 600], [73, "Oud Ispahan", "Dior", 600], [74, "Oud Maracuja", "Maison Creveli", 500], [75, "Oud Satin Mood Extrait", "Maison Francis Kurkdjian", 600], [76, "Oud Wood", "Tom Ford", 600], [77, "Purpose 50", "Amouage", 600], [78, "Royal Oud", "Creed", 600], [79, "Santal 33", "Le Labo", 500], [80, "The Moon", "Frédérique Male", 500], [81, "Africain Leather", "Memo Paris", 600], [82, "Black Afgano", "Nasomatto", 600], [83, "Bois d'Argent", "Dior", 500], [84, "Bois Impérial Extrait", "Essential Parfums", 600], [85, "Carlisle", "Parfum de marly", 600], [86, "Coromandel", "Chanel", 600], [87, "Fabulous", "Tom Ford", 600], [88, "Flacon Leather", "Matière Première", 600], [89, "Ganymede", "Marc Antoine Barrois", 600], [90, "Homme Intense", "Dior", 550], [91, "Homme Parfum", "Dior", 600], [92, "Interlude Man", "Amouage", 600], [93, "Ombre Leather", "Tom Ford", 450], [94, "Patchouli Intense", "Nicolai", 350], [95, "Red Tobacco", "Mancera", 550], [96, "Side Effect", "Initio", 550], [97, "Terre d'Hermes", "Hermes", 600], [98, "Terroni", "Orto Parisi", 550], [99, "Tuscan Leather", "Tom Ford", 600], [100, "Tuxedo", "Yves Saint Laurent", 500]];
-let CATALOG = [];         // tous les parfums connus (actifs + retirés) — persisté
-let PRODUCTS = [];        // sous-ensemble actif, dérivé de CATALOG (pour la vente/le stock)
-let PRODUCT_BY_NUM = {};  // num -> produit, résolu depuis CATALOG (actifs ET retirés, pour l'historique)
-
-function computeDefaultFamily(num){
-  const f = FAMILIES.find(fam => num >= fam.min && num <= fam.max);
-  return f ? f.key : FAMILIES[FAMILIES.length - 1].key;
-}
-function buildDefaultCatalog(){
-  return PRODUCTS_RAW.map(([num,name,maison]) => ({ num, name, maison, family: computeDefaultFamily(num), removed:false }));
-}
-function normalizeCatalog(raw){
-  if(!Array.isArray(raw) || !raw.length) return buildDefaultCatalog();
-  return raw.map(p => ({
-    num: p.num,
-    name: p.name || `Parfum #${p.num}`,
-    maison: p.maison || '',
-    family: p.family && FAMILIES.some(f => f.key === p.family) ? p.family : computeDefaultFamily(p.num),
-    removed: !!p.removed
-  })).sort((a,b) => a.num - b.num);
-}
-function rebuildCatalogIndexes(){
-  PRODUCTS = CATALOG.filter(p => !p.removed);
-  PRODUCT_BY_NUM = Object.fromEntries(CATALOG.map(p => [p.num, p]));
-}
-function nextCatalogNum(){
-  return CATALOG.length ? Math.max(...CATALOG.map(p => p.num)) + 1 : 1;
-}
 
 const DEFAULT_SETTINGS = {
   prixRegulier: 50, prixPromo: 40, prixFidele: 30,
@@ -270,23 +245,44 @@ const PAYMENT_LABELS = { cash: 'Comptant', carte: 'Carte' };
 const WEEKDAY_LABELS = ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
 const MONTH_LABELS = ['jan','fév','mar','avr','mai','juin','juil','août','sep','oct','nov','déc'];
 
-/* Familles olfactives par plage de numéro, avec une couleur dédiée à chacune. */
-const FAMILIES = [
+const NEW_RAW = [[101,"Black Tie","Celine"],[102,"Room 1015","Wavechild"],[103,"Wulong Cha","Nishane"],[104,"Herod","Parfum de marly"],[105,"Avanguardia","Xerjoff"],[106,"Wild Vetiver","Creed"],[107,"Noir Extreme","Tom Ford"],[108,"Hundred Silent Ways","Nishane"],[109,"Mojave Ghost","Byredo"],[110,"Summer Hammer","Lorenzo"],[111,"Promise","Frédérique Male"],[112,"Meteore","Louis Vuitton"],[113,"Narcotic Delight","Initio"],[114,"Oud Stallion","Maison Creveli"],[115,"Myriad","Louis Vuitton"],[116,"Myself","Yves Saint Laurent"],[117,"Donna Born In Roma Woman","Valentino"],[118,"Uomo Born In Roma Intense","Valentino"],[119,"Paradoxe","Prada"],[120,"Gris","Dior"]];
+const DEFAULT_FAMILIES = [
   { key:'bleu',    min:1,  max:20,  label:'Bleu',    color:'#3E6B8A' },
   { key:'vanille', min:21, max:40,  label:'Vanille', color:'#B8863B' },
   { key:'rose',    min:41, max:60,  label:'Rose',    color:'#C06C86' },
   { key:'brun',    min:61, max:80,  label:'Brun',    color:'#7A5230' },
-  { key:'vert',    min:81, max:100, label:'Vert',    color:'#5C7A52' }
+  { key:'vert',    min:81, max:100, label:'Vert',    color:'#5C7A52' },
+  { key:'infinity',min:101,max:120, label:'Infinity',color:'#1A1A1A' }
 ];
+function defaultCatalog(){
+  return {
+    families: DEFAULT_FAMILIES.map(({key,label,color}) => ({key,label,color})),
+    products: PRODUCTS_RAW.concat(NEW_RAW).map(([num,name,maison]) => ({num,name,maison,family:(DEFAULT_FAMILIES.find(f => num>=f.min && num<=f.max)||{}).key||''}))
+  };
+}
+let FAMILIES = [], PRODUCTS = [], PRODUCT_BY_NUM = {};
+function setCatalog(c){
+  FAMILIES = c.families.map(f => ({key:f.key,label:f.label,color:f.color}));
+  PRODUCTS = c.products.map(p => ({num:+p.num,name:p.name,maison:p.maison||'',family:p.family||''})).sort((a,b) => a.num-b.num);
+  PRODUCT_BY_NUM = Object.fromEntries(PRODUCTS.map(p => [p.num,p]));
+}
+function catalogObj(){ return {families:FAMILIES.map(f => ({...f})), products:PRODUCTS.map(({num,name,maison,family}) => ({num,name,maison,family}))}; }
+function catalogPayload(){ const c = catalogObj(); return {families:c.families, perfumes:c.products}; }
+function applyCatalogFromData(d){
+  if(d && Array.isArray(d.families) && Array.isArray(d.perfumes) && d.perfumes.length){
+    setCatalog({families:d.families, products:d.perfumes});
+    storSet('lf-catalog', catalogObj());
+  }
+}
+setCatalog(defaultCatalog());
 function familyOf(num){
   const p = PRODUCT_BY_NUM[num];
-  const key = (p && p.family) || computeDefaultFamily(num);
-  return FAMILIES.find(f => f.key === key) || FAMILIES[0];
+  return (p && FAMILIES.find(f => f.key === p.family)) || {key:'', label:'Sans famille', color:'#999'};
 }
-function familyDot(num){
-  const f = familyOf(num);
-  return `<span title="Famille ${f.label}" style="display:inline-block;width:8px;height:8px;border-radius:2px;background:${f.color};margin-right:5px;flex:none;vertical-align:middle;"></span>`;
+function dotHTML(color,label){
+  return `<span title="Famille ${escapeHtml(label)}" style="display:inline-block;width:8px;height:8px;border-radius:2px;background:${color};margin-right:5px;flex:none;vertical-align:middle;"></span>`;
 }
+function familyDot(num){ const f = familyOf(num); return dotHTML(f.color, f.label); }
 
 /* ============================= STATE ============================= */
 let S = {
@@ -302,8 +298,6 @@ let S = {
   stockQuery: '',
   stockFilter: 'all',
   stockFamily: 'all',
-  showRemoved: false,
-  addProductOpen: false,
   stockSort: 'name',
   restockOpenNum: null,
   histMonth: '',
@@ -322,21 +316,18 @@ const FULL_BOTTLE_ML = 600; // toutes les bouteilles démarrent pleines à 600 m
 function defaultStock(){
   const full = (S.settings && S.settings.volumeBouteille) || FULL_BOTTLE_ML;
   const s = {};
-  CATALOG.forEach(p => s[p.num] = {ml: full, sold: 0});
+  PRODUCTS.forEach(p => s[p.num] = {ml: full, sold: 0});
   return s;
 }
 function normalizeStock(raw){
   const full = (S.settings && S.settings.volumeBouteille) || FULL_BOTTLE_ML;
   const out = {};
-  CATALOG.forEach(p => {
+  PRODUCTS.forEach(p => {
     const v = raw ? raw[p.num] : undefined;
     if(v && typeof v === 'object') out[p.num] = {ml: typeof v.ml === 'number' ? v.ml : full, sold: typeof v.sold === 'number' ? v.sold : 0};
     else if(typeof v === 'number') out[p.num] = {ml: v, sold: 0};
     else out[p.num] = {ml: full, sold: 0};
   });
-  // Conserve les entrées de stock pour tout numéro déjà connu dans les données mais pas encore dans CATALOG
-  // (ex. import d'une sauvegarde plus récente que le catalogue local).
-  if(raw){ Object.keys(raw).forEach(k => { if(!(k in out)) out[k] = raw[k]; }); }
   return out;
 }
 
@@ -509,13 +500,13 @@ function subtractFromSummary(summary, date, qty, total, type){
 async function loadAll(){
   const cmk = currentMonthKey();
   const pmk = shiftMonthKey(cmk, -1);
-  const [settings, catalogRaw, stockRaw, summary, curSales, prevSales] = await Promise.all([
-    storGet('lf-settings'), storGet('lf-catalog'), storGet('lf-stock'), storGet('lf-summary'),
-    storGet('lf-sales:' + cmk), storGet('lf-sales:' + pmk)
+  const [settings, stockRaw, summary, curSales, prevSales, catRaw] = await Promise.all([
+    storGet('lf-settings'), storGet('lf-stock'), storGet('lf-summary'),
+    storGet('lf-sales:' + cmk), storGet('lf-sales:' + pmk), storGet('lf-catalog')
   ]);
+  if(catRaw && catRaw.families && catRaw.products) setCatalog(catRaw);
+  else await storSet('lf-catalog', catalogObj());
   S.settings = settings || {...DEFAULT_SETTINGS};
-  CATALOG = normalizeCatalog(catalogRaw);
-  rebuildCatalogIndexes();
   S.stock = normalizeStock(stockRaw);
   S.summary = summary || {months:{}, days:{}};
   if(!S.summary.months) S.summary.months = {};
@@ -523,7 +514,6 @@ async function loadAll(){
   S.salesByMonth[cmk] = curSales || [];
   S.salesByMonth[pmk] = prevSales || [];
   if(!settings) await storSet('lf-settings', S.settings);
-  if(!catalogRaw) await storSet('lf-catalog', CATALOG);
   if(!stockRaw) await storSet('lf-stock', S.stock);
   if(!summary) await storSet('lf-summary', S.summary);
   S.histMonth = cmk;
@@ -537,10 +527,10 @@ async function silentRefresh(){
   const active = document.activeElement;
   if(active && ['INPUT','SELECT','TEXTAREA'].includes(active.tagName)) return; // ne pas interrompre la saisie
   const cmk = currentMonthKey();
-  const [stockRaw, summary, curSales, catalogRaw] = await Promise.all([
+  const [stockRaw, summary, curSales, catRaw] = await Promise.all([
     storGet('lf-stock'), storGet('lf-summary'), storGet('lf-sales:' + cmk), storGet('lf-catalog')
   ]);
-  if(catalogRaw){ CATALOG = normalizeCatalog(catalogRaw); rebuildCatalogIndexes(); }
+  if(catRaw && catRaw.families && catRaw.products) setCatalog(catRaw);
   if(stockRaw) S.stock = normalizeStock(stockRaw);
   if(summary){ S.summary = summary; if(!S.summary.months) S.summary.months={}; if(!S.summary.days) S.summary.days={}; }
   if(curSales) S.salesByMonth[cmk] = curSales;
@@ -576,16 +566,18 @@ function render(){
       ${tabBtn('caisse','🛒','Caisse')}
       ${tabBtn('stock','📦','Stock')}
       ${tabBtn('dashboard','📊','Tableau de bord')}
+      ${tabBtn('analyse','📈','Analyse')}
       ${tabBtn('historique','📋','Historique')}
       ${tabBtn('reglages','⚙️','Réglages')}
     </div>
     <div class="app-content" id="content"></div>
   `;
-  document.querySelectorAll('.tab-btn').forEach(b => b.addEventListener('click', () => { S.tab = b.dataset.tab; render(); }));
+  document.querySelectorAll('.tab-btn').forEach(b => b.addEventListener('click', () => { S.tab = b.dataset.tab; render(); if(S.tab === 'analyse') anaLoad(); }));
   const content = document.getElementById('content');
   if(S.tab === 'caisse') content.innerHTML = renderCaisse();
   else if(S.tab === 'stock') content.innerHTML = renderStock();
   else if(S.tab === 'dashboard') content.innerHTML = renderDashboard();
+  else if(S.tab === 'analyse') content.innerHTML = renderAnalyse();
   else if(S.tab === 'historique') content.innerHTML = renderHistorique();
   else if(S.tab === 'reglages') content.innerHTML = renderReglages();
   bindTabEvents();
@@ -704,8 +696,7 @@ function cartLine(l, i){
 function renderStock(){
   const full = S.settings.volumeBouteille || FULL_BOTTLE_ML;
   const q = S.stockQuery.trim().toLowerCase();
-  const source = S.showRemoved ? CATALOG : PRODUCTS;
-  let list = source.map(p => ({...p, st: S.stock[p.num] || {ml:full, sold:0}}));
+  let list = PRODUCTS.map(p => ({...p, st: S.stock[p.num] || {ml:full, sold:0}}));
   if(q) list = list.filter(p => p.name.toLowerCase().includes(q) || p.maison.toLowerCase().includes(q) || String(p.num)===q);
   if(S.stockFilter !== 'all') list = list.filter(p => statusOf(p.st.ml) === S.stockFilter);
   if(S.stockFamily !== 'all') list = list.filter(p => familyOf(p.num).key === S.stockFamily);
@@ -716,7 +707,6 @@ function renderStock(){
 
   const counts = { ok:0, attention:0, urgent:0 };
   PRODUCTS.forEach(p => counts[statusOf((S.stock[p.num]||{ml:full}).ml)]++);
-  const removedCount = CATALOG.length - PRODUCTS.length;
 
   return `
   <div class="panel">
@@ -742,22 +732,17 @@ function renderStock(){
       </div>
       <div class="filter-chips">
         <button class="chip ${S.stockFamily==='all'?'active':''}" data-family="all" type="button">Toutes les familles</button>
-        ${FAMILIES.map(f => `<button class="chip ${S.stockFamily===f.key?'active':''}" data-family="${f.key}" type="button" style="${S.stockFamily===f.key?`background:${f.color};border-color:${f.color};color:#fff;`:''}">${familyDot(f.min)}${f.label} (#${f.min}–${f.max})</button>`).join('')}
+        ${FAMILIES.map(f => `<button class="chip ${S.stockFamily===f.key?'active':''}" data-family="${f.key}" type="button" style="${S.stockFamily===f.key?`background:${f.color};border-color:${f.color};color:#fff;`:''}">${dotHTML(f.color,f.label)}${escapeHtml(f.label)} (${PRODUCTS.filter(p => p.family === f.key).length})</button>`).join('')}
       </div>
-      <div class="filter-chips">
-        <button class="chip ${S.showRemoved?'active':''}" id="toggle-removed" type="button">🗑 Afficher les parfums retirés (${removedCount})</button>
-      </div>
-      <div style="margin-bottom:14px; display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
-        <button class="btn secondary small" id="toggle-add-product" type="button">${S.addProductOpen ? '✕ Annuler' : '+ Ajouter un parfum'}</button>
+      <div style="margin-bottom:14px;">
         <button class="btn gold small" id="restock-all" type="button">↻ Remettre tous les parfums à ${full} ml</button>
-        <span class="hint">Réinitialise les niveaux de stock (garde l'historique des ventes intact).</span>
+        <span class="hint" style="margin-left:6px;">Réinitialise les niveaux de stock (garde l'historique des ventes intact).</span>
       </div>
-      ${S.addProductOpen ? addProductForm() : ''}
       <div class="table-wrap">
         <table>
-          <thead><tr><th>Parfum</th><th>Maison</th><th></th><th class="right">Stock</th><th class="right">Vendu (total)</th><th>Statut</th><th></th><th></th></tr></thead>
+          <thead><tr><th>Parfum</th><th>Maison</th><th></th><th class="right">Stock</th><th class="right">Vendu (total)</th><th>Statut</th><th></th></tr></thead>
           <tbody id="stock-tbody">
-            ${list.length ? list.map(p => stockRow(p)).join('') : `<tr><td colspan="8"><div class="empty-state">Aucun parfum ne correspond à ce filtre.</div></td></tr>`}
+            ${list.length ? list.map(p => stockRow(p)).join('') : `<tr><td colspan="7"><div class="empty-state">Aucun parfum ne correspond à ce filtre.</div></td></tr>`}
           </tbody>
         </table>
       </div>
@@ -765,37 +750,20 @@ function renderStock(){
   </div>`;
 }
 
-function addProductForm(){
-  return `
-  <div class="restock-box" style="border-color:var(--wine); margin-bottom:14px;">
-    <div class="rb-label">Nouveau parfum — un numéro (#${nextCatalogNum()}) lui sera attribué automatiquement.</div>
-    <input type="text" id="new-product-name" class="date-input" style="flex:1; min-width:160px;" placeholder="Nom du parfum">
-    <input type="text" id="new-product-maison" class="date-input" style="flex:1; min-width:140px;" placeholder="Maison">
-    <select id="new-product-family" class="date-input" style="min-width:140px;">
-      ${FAMILIES.map(f => `<option value="${f.key}">${f.label}</option>`).join('')}
-    </select>
-    <button class="btn small" id="confirm-add-product" type="button">+ Ajouter</button>
-  </div>`;
-}
-
 function stockRow(p){
   const open = S.restockOpenNum === p.num;
   p.st = p.st || {ml: S.settings.volumeBouteille || FULL_BOTTLE_ML, sold: 0};
-  const removed = !!p.removed;
   return `
-    <tr style="${removed ? 'opacity:0.55;' : ''}">
-      <td>${familyDot(p.num)}<span class="num-cell">#${p.num}</span> ${escapeHtml(p.name)} ${removed ? '<span class="status-pill status-urgent" style="margin-left:6px;">Retiré</span>' : ''}</td>
+    <tr>
+      <td>${familyDot(p.num)}<span class="num-cell">#${p.num}</span> ${escapeHtml(p.name)}</td>
       <td>${escapeHtml(p.maison)}</td>
       <td class="bottle-cell">${bottleGauge(p.st.ml)}</td>
       <td class="right mono">${p.st.ml} ml</td>
       <td class="right mono">${p.st.sold} un.</td>
       <td>${statusPill(statusOf(p.st.ml))}</td>
-      <td>${removed ? '' : `<button class="restock-btn" data-role="restock-toggle" data-num="${p.num}" type="button">↻ Réappro</button>`}</td>
-      <td>${removed
-        ? `<button class="restock-btn" data-role="reactivate" data-num="${p.num}" type="button" style="color:var(--sage);">↺ Réactiver</button>`
-        : `<button class="restock-btn" data-role="remove-product" data-num="${p.num}" type="button" style="color:var(--red);">🗑 Retirer</button>`}</td>
+      <td><button class="restock-btn" data-role="restock-toggle" data-num="${p.num}" type="button">↻ Réappro</button></td>
     </tr>
-    ${open ? `<tr><td colspan="8" style="border-bottom:1px solid var(--line);">${restockBox(p)}</td></tr>` : ''}
+    ${open ? `<tr><td colspan="7" style="border-bottom:1px solid var(--line);">${restockBox(p)}</td></tr>` : ''}
   `;
 }
 
@@ -1024,6 +992,142 @@ function renderHistorique(){
   </div>`;
 }
 
+
+/* ============================= ANALYSE DÉTAILLÉE ============================= */
+const ANA_PERIODS = [['jour',"Aujourd'hui"],['7j','7 jours'],['mois','Ce mois'],['mois-1','Mois dernier'],['tout','Tout']];
+function addDays(iso,n){ const d = new Date(iso + 'T12:00:00'); d.setDate(d.getDate() + n); return d.toISOString().slice(0,10); }
+function anaRange(p){
+  const t = todayISO(), cmk = currentMonthKey(), pmk = shiftMonthKey(cmk,-1), ppk = shiftMonthKey(cmk,-2);
+  if(p === 'jour') return {from:t, to:t, pf:addDays(t,-1), pt:addDays(t,-1)};
+  if(p === '7j') return {from:addDays(t,-6), to:t, pf:addDays(t,-13), pt:addDays(t,-7)};
+  if(p === 'mois'){
+    const dim = new Date(+pmk.slice(0,4), +pmk.slice(5), 0).getDate();
+    return {from:cmk+'-01', to:t, pf:pmk+'-01', pt:pmk+'-'+String(Math.min(+t.slice(8), dim)).padStart(2,'0')};
+  }
+  if(p === 'mois-1') return {from:pmk+'-01', to:pmk+'-31', pf:ppk+'-01', pt:ppk+'-31'};
+  return {from:'0000-01-01', to:'9999-12-31', pf:null, pt:null};
+}
+async function anaKeys(p){
+  const r = anaRange(p), ks = new Set(), t = todayISO();
+  const span = (a,b) => { if(!a) return; let m = a.slice(0,7); const e = b.slice(0,7); for(let i=0; i<60 && m<=e; i++){ ks.add(m); m = shiftMonthKey(m,1); } };
+  if(p === 'tout'){
+    Object.keys(S.summary.months).forEach(k => ks.add(k));
+    Object.keys(S.salesByMonth).forEach(k => ks.add(k));
+    (await storList('lf-sales:')).forEach(k => ks.add(k.replace('lf-sales:','')));
+  } else { span(r.from, r.to); span(r.pf, r.pt); }
+  span(addDays(t,-30), t);
+  return [...ks];
+}
+async function anaLoad(){
+  S.anaLoading = true; render();
+  try{ await Promise.all((await anaKeys(S.anaPeriod || 'mois')).map(getMonthSales)); }catch(e){}
+  S.anaLoading = false; render();
+}
+function salesBetween(f,t){
+  const out = [];
+  if(f) Object.values(S.salesByMonth).forEach(arr => arr.forEach(s => { if(s.date >= f && s.date <= t) out.push(s); }));
+  return out;
+}
+function anaAgg(list){
+  const a = {rev:0, units:0, tickets:new Set(), days:new Set(), fam:{}, per:{}, hour:Array(24).fill(0), type:{R:0,P:0,F:0,X:0}, pay:{cash:0,carte:0}};
+  list.forEach(s => {
+    a.rev += s.total; a.units += s.qty; a.tickets.add(s.date + ' ' + (s.time||'')); a.days.add(s.date);
+    const fk = familyOf(s.num).key || '_', fo = a.fam[fk] || (a.fam[fk] = {rev:0, units:0});
+    fo.rev += s.total; fo.units += s.qty;
+    const po = a.per[s.num] || (a.per[s.num] = {qty:0, rev:0}); po.qty += s.qty; po.rev += s.total;
+    const hr = parseInt(s.time); if(hr >= 0 && hr < 24) a.hour[hr] += s.qty;
+    a.type[s.type] = (a.type[s.type]||0) + s.total;
+    a.pay[s.payment === 'carte' ? 'carte' : 'cash'] += s.total;
+  });
+  return a;
+}
+function anaDelta(cur, prev){
+  if(!prev) return '';
+  const pc = (cur - prev) / prev * 100, up = pc >= 0;
+  return ` <span style="color:${up?'var(--sage)':'var(--red)'};font-weight:600;">${up?'▲':'▼'} ${Math.abs(pc).toFixed(0)} %</span>`;
+}
+function hbar(left, val, max, color, right){
+  const w = max ? Math.max(2, Math.round(val / max * 100)) : 0;
+  return `<div style="padding:5px 0;font-size:0.82rem;"><div style="display:flex;justify-content:space-between;gap:8px;"><span>${left}</span><span class="mono">${right}</span></div><div style="height:6px;background:var(--panel-alt);border-radius:3px;margin-top:3px;"><div style="height:6px;width:${w}%;background:${color};border-radius:3px;"></div></div></div>`;
+}
+function renderAnalyse(){
+  if(S.anaLoading) return `<div class="loading-screen"><div class="spinner"></div><div>Calcul de l'analyse…</div></div>`;
+  const per = S.anaPeriod || 'mois', r = anaRange(per), today = todayISO(), vv = S.settings.volumeVente || 50;
+  const a = anaAgg(salesBetween(r.from, r.to)), b = anaAgg(salesBetween(r.pf, r.pt));
+  const tk = a.tickets.size, tkP = b.tickets.size, nd = a.days.size;
+  const basket = tk ? a.rev / tk : 0, basketP = tkP ? b.rev / tkP : 0;
+  const chips = ANA_PERIODS.map(([k,l]) => `<button class="chip ${per===k?'active':''}" data-ana="${k}" type="button">${l}</button>`).join('');
+
+  const famRows = FAMILIES.map(f => ({key:f.key, label:f.label, color:f.color})).concat([{key:'_', label:'Sans famille', color:'#999'}])
+    .map(f => ({...f, ...(a.fam[f.key] || {rev:0, units:0})})).filter(f => f.units).sort((x,y) => y.rev - x.rev);
+  const famMax = Math.max(1, ...famRows.map(f => f.rev));
+
+  const ranked = PRODUCTS.map(p => ({...p, qty:(a.per[p.num]||{}).qty||0, rev:(a.per[p.num]||{}).rev||0, ml:(S.stock[p.num]||{}).ml||0}));
+  const top = ranked.filter(p => p.qty).sort((x,y) => y.qty - x.qty).slice(0,10), topMax = top.length ? top[0].qty : 1;
+  const slow = ranked.slice().sort((x,y) => x.qty - y.qty || y.ml - x.ml).slice(0,10);
+
+  // Prévision de rupture : cadence des 30 derniers jours
+  const win = salesBetween(addDays(today,-29), today), mlSold = {};
+  win.forEach(s => { mlSold[s.num] = (mlSold[s.num]||0) + s.qty * vv; });
+  const first = win.reduce((m,s) => s.date < m ? s.date : m, today);
+  const span = Math.min(30, Math.max(7, Math.round((new Date(today) - new Date(first)) / 864e5) + 1));
+  const fc = PRODUCTS.map(p => { const perDay = (mlSold[p.num]||0) / span, ml = (S.stock[p.num]||{}).ml || 0; return {...p, perDay, ml, left: perDay ? ml / perDay : Infinity}; })
+    .filter(p => p.perDay && p.left <= 21).sort((x,y) => x.left - y.left).slice(0,15);
+
+  const hrs = a.hour.map((v,i) => v ? i : -1).filter(i => i >= 0);
+  const h0 = hrs.length ? Math.min(...hrs) : 9, h1 = Math.max(hrs.length ? Math.max(...hrs) : 18, h0 + 5), hMax = Math.max(1, ...a.hour);
+  const hCols = []; for(let i = h0; i <= h1; i++) hCols.push(i);
+  const payTot = Math.max(1, a.pay.cash + a.pay.carte), typTot = Math.max(1, a.rev);
+
+  return `
+  <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;">${chips}</div>
+  <div class="kpi-row">
+    <div class="kpi accent"><div class="k-label">Chiffre d'affaires</div><div class="k-value">${fmtMoney(a.rev)}</div><div class="k-sub">${a.units} unité${a.units>1?'s':''}${anaDelta(a.rev, b.rev)}</div></div>
+    <div class="kpi"><div class="k-label">Paniers</div><div class="k-value">${tk}</div><div class="k-sub">sur ${nd} jour${nd>1?'s':''} de vente${anaDelta(tk, tkP)}</div></div>
+    <div class="kpi"><div class="k-label">Panier moyen</div><div class="k-value">${fmtMoney(basket)}</div><div class="k-sub">${tk ? (a.units/tk).toFixed(1) : 0} unités / panier${anaDelta(basket, basketP)}</div></div>
+    <div class="kpi"><div class="k-label">Prix moyen / unité</div><div class="k-value">${fmtMoney(a.units ? a.rev/a.units : 0)}</div><div class="k-sub">remises incluses</div></div>
+    <div class="kpi"><div class="k-label">$ / jour de vente</div><div class="k-value">${fmtMoney(nd ? a.rev/nd : 0)}</div><div class="k-sub">${nd ? (a.units/nd).toFixed(1) : 0} unités / jour</div></div>
+  </div>
+  ${per !== 'tout' ? `<div class="hint" style="margin:-8px 0 14px;">Les variations ▲▼ comparent à la période précédente de même durée.</div>` : ''}
+
+  <div class="grid-2 even">
+    <div class="panel"><div class="panel-header"><h2 class="panel-title">Chiffre d'affaires par famille</h2></div><div class="panel-body">
+      ${famRows.length ? famRows.map(f => hbar(`${dotHTML(f.color,f.label)}${escapeHtml(f.label)} <span class="hint" style="margin:0">· ${f.units} un.</span>`, f.rev, famMax, f.color, `${fmtMoney(f.rev)} · ${(f.rev/Math.max(1,a.rev)*100).toFixed(0)} %`)).join('') : '<div class="note-line">Aucune vente sur cette période.</div>'}
+    </div></div>
+    <div class="panel"><div class="panel-header"><h2 class="panel-title">Top 10 des parfums</h2></div><div class="panel-body">
+      ${top.length ? top.map(p => hbar(`${familyDot(p.num)}<span class="p-num">#${p.num}</span>${escapeHtml(p.name)}`, p.qty, topMax, familyOf(p.num).color, `${p.qty} un. · ${fmtMoney(p.rev)}`)).join('') : '<div class="note-line">Aucune vente sur cette période.</div>'}
+    </div></div>
+  </div>
+
+  <div class="grid-2 even">
+    <div class="panel"><div class="panel-header"><h2 class="panel-title">Prévision de rupture</h2><span class="panel-sub">cadence des ${span} derniers jours</span></div><div class="panel-body">
+      ${fc.length ? `<div class="table-wrap"><table><thead><tr><th>Parfum</th><th class="right">Stock</th><th class="right">ml / jour</th><th class="right">Reste</th></tr></thead><tbody>
+        ${fc.map(p => `<tr><td>${familyDot(p.num)}<span class="num-cell">#${p.num}</span> ${escapeHtml(p.name)}</td><td class="right mono">${p.ml} ml</td><td class="right mono">${p.perDay.toFixed(0)}</td><td class="right mono" style="color:${p.left<=7?'var(--red)':'var(--amber)'};font-weight:600;" title="Rupture vers le ${fmtDateFR(addDays(today, Math.floor(p.left)))}">${Math.floor(p.left)} j</td></tr>`).join('')}
+      </tbody></table></div><div class="hint">Estimation : stock actuel ÷ vente moyenne par jour. Passez la souris sur « Reste » pour la date probable.</div>` : `<div class="empty-state"><div class="es-title">Aucune rupture prévue</div>Aucun parfum ne s'épuise d'ici 3 semaines au rythme actuel.</div>`}
+    </div></div>
+    <div class="panel"><div class="panel-header"><h2 class="panel-title">Parfums à relancer</h2><span class="panel-sub">les moins vendus</span></div><div class="panel-body">
+      <div class="table-wrap"><table><thead><tr><th>Parfum</th><th class="right">Vendus</th><th class="right">Stock</th></tr></thead><tbody>
+        ${slow.map(p => `<tr><td>${familyDot(p.num)}<span class="num-cell">#${p.num}</span> ${escapeHtml(p.name)}</td><td class="right mono">${p.qty}</td><td class="right mono">${p.ml} ml</td></tr>`).join('')}
+      </tbody></table></div><div class="hint">Sur la période choisie. Un stock élevé sans vente = argent immobilisé : bon candidat pour une promo.</div>
+    </div></div>
+  </div>
+
+  <div class="grid-2 even">
+    <div class="panel"><div class="panel-header"><h2 class="panel-title">Unités vendues par heure</h2></div><div class="panel-body">
+      <div class="chart-bars" style="height:140px;">${hCols.map(i => `<div class="chart-bar-col"><div class="chart-value">${a.hour[i]||''}</div><div class="chart-bar" style="height:${Math.round(a.hour[i]/hMax*90)||2}px;" title="${i} h — ${a.hour[i]} unités"></div><div class="chart-label">${i}h</div></div>`).join('')}</div>
+    </div></div>
+    <div class="panel"><div class="panel-header"><h2 class="panel-title">Paiement &amp; types de prix</h2></div><div class="panel-body">
+      ${hbar('💵 Comptant', a.pay.cash, payTot, 'var(--sage)', `${fmtMoney(a.pay.cash)} · ${(a.pay.cash/payTot*100).toFixed(0)} %`)}
+      ${hbar('💳 Carte', a.pay.carte, payTot, 'var(--wine)', `${fmtMoney(a.pay.carte)} · ${(a.pay.carte/payTot*100).toFixed(0)} %`)}
+      <div style="height:10px"></div>
+      ${['R','P','F','X'].map(t => hbar(`<span style="color:${TYPE_COLORS[t]};font-weight:600;">${TYPE_LABELS[t]}</span>`, a.type[t], typTot, TYPE_COLORS[t], `${fmtMoney(a.type[t])} · ${(a.type[t]/typTot*100).toFixed(0)} %`)).join('')}
+    </div></div>
+  </div>`;
+}
+function bindAnalyse(){
+  document.querySelectorAll('[data-ana]').forEach(c => c.addEventListener('click', () => { S.anaPeriod = c.dataset.ana; anaLoad(); }));
+}
+
 /* ============================= REGLAGES ============================= */
 function renderReglages(){
   const s = S.settings;
@@ -1048,6 +1152,11 @@ function renderReglages(){
       </div>
       <button class="btn" id="save-settings" type="button" style="margin-top:8px;">Enregistrer les réglages</button>
     </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-header"><h2 class="panel-title">Familles &amp; parfums</h2><span class="panel-sub">${PRODUCTS.length} parfums · ${FAMILIES.length} familles</span></div>
+    <div class="panel-body" id="cat-panel">${catInner()}</div>
   </div>
 
   <div class="panel">
@@ -1076,6 +1185,7 @@ function renderReglages(){
 function bindTabEvents(){
   if(S.tab === 'caisse') bindCaisse();
   else if(S.tab === 'stock') bindStock();
+  else if(S.tab === 'analyse') bindAnalyse();
   else if(S.tab === 'historique') bindHistorique();
   else if(S.tab === 'reglages') bindReglages();
 }
@@ -1170,22 +1280,6 @@ function bindStock(){
   const restockAllBtn = document.getElementById('restock-all');
   if(restockAllBtn) restockAllBtn.addEventListener('click', restockAll);
 
-  const toggleRemovedBtn = document.getElementById('toggle-removed');
-  if(toggleRemovedBtn) toggleRemovedBtn.addEventListener('click', () => { S.showRemoved = !S.showRemoved; render(); });
-
-  const toggleAddBtn = document.getElementById('toggle-add-product');
-  if(toggleAddBtn) toggleAddBtn.addEventListener('click', () => { S.addProductOpen = !S.addProductOpen; render(); });
-
-  const confirmAddBtn = document.getElementById('confirm-add-product');
-  if(confirmAddBtn) confirmAddBtn.addEventListener('click', () => {
-    const name = document.getElementById('new-product-name').value.trim();
-    const maison = document.getElementById('new-product-maison').value.trim();
-    const family = document.getElementById('new-product-family').value;
-    if(!name){ toast('Entrez un nom de parfum.'); return; }
-    S.addProductOpen = false;
-    addProduct(name, maison, family);
-  });
-
   // Délégation d'événements sur le corps du tableau : fonctionne quel que soit
   // le nombre de lignes ouvertes et évite les problèmes de liaison après un nouveau rendu.
   const tbody = document.getElementById('stock-tbody');
@@ -1211,13 +1305,6 @@ function bindStock(){
       const val = input ? parseFloat(input.value) : NaN;
       if(!val || val <= 0){ toast('Entrez une quantité en ml valide.'); return; }
       doRestock(num, 'add', val);
-    } else if(role === 'remove-product'){
-      const p = PRODUCT_BY_NUM[num];
-      if(confirm(`Retirer « ${p ? p.name : '#'+num} » de la liste active ? L'historique des ventes est conservé, et vous pourrez le réactiver plus tard.`)){
-        setProductRemoved(num, true);
-      }
-    } else if(role === 'reactivate'){
-      setProductRemoved(num, false);
     }
   });
 }
@@ -1259,48 +1346,6 @@ async function restockAll(){
     toast(`Tous les parfums sont remis à ${full} ml.`);
   }catch(e){
     toast('Erreur lors de la réinitialisation du stock — réessayez.');
-  }
-}
-
-/* ---------- Gestion du catalogue : ajouter / retirer / réactiver un parfum ---------- */
-async function persistCatalog(){
-  if(typeof window.storage !== 'undefined'){
-    try{ await storSet('lf-catalog', CATALOG); }catch(e){ /* le fichier local prendra le relais */ }
-  }
-  await writeLocalFile();
-}
-
-async function addProduct(name, maison, familyKey){
-  const full = S.settings.volumeBouteille || FULL_BOTTLE_ML;
-  const num = nextCatalogNum();
-  const newProduct = { num, name: name.trim(), maison: (maison || '').trim(), family: familyKey, removed: false };
-  CATALOG = [...CATALOG, newProduct];
-  rebuildCatalogIndexes();
-  S.stock[num] = { ml: full, sold: 0 };
-  render();
-  try{
-    await mutateStock(stock => { stock[num] = { ml: full, sold: 0 }; });
-    await persistCatalog();
-    S.lastSync = new Date(); updateSyncLabel();
-    render();
-    toast(`Parfum ajouté · #${num} ${newProduct.name}`);
-  }catch(e){
-    toast("Erreur lors de l'ajout du parfum — réessayez.");
-  }
-}
-
-async function setProductRemoved(num, removed){
-  CATALOG = CATALOG.map(p => p.num === num ? {...p, removed} : p);
-  rebuildCatalogIndexes();
-  if(S.restockOpenNum === num) S.restockOpenNum = null;
-  render();
-  try{
-    await persistCatalog();
-    S.lastSync = new Date(); updateSyncLabel();
-    render();
-    toast(removed ? `Parfum retiré de la liste active.` : `Parfum réactivé.`);
-  }catch(e){
-    toast('Erreur lors de la mise à jour du catalogue — réessayez.');
   }
 }
 
@@ -1354,7 +1399,131 @@ async function undoSale(id){
   }
 }
 
+
+/* ============================= FAMILLES & PARFUMS (Réglages) ============================= */
+function famOpts(sel){
+  return '<option value="">— Sans famille —</option>' + FAMILIES.map(f => `<option value="${f.key}"${f.key===sel?' selected':''}>${escapeHtml(f.label)}</option>`).join('');
+}
+function catListHTML(){
+  const q = (S.catQuery||'').toLowerCase(), ff = S.catFamily || 'all';
+  const list = PRODUCTS.filter(p => {
+    const okF = ff === 'all' || (ff === '_none' ? !FAMILIES.some(f => f.key === p.family) : p.family === ff);
+    return okF && (p.name+' '+p.maison+' '+p.num).toLowerCase().includes(q);
+  });
+  return `<div class="hint" style="margin:0 0 8px;">${list.length} parfum${list.length>1?'s':''} — les modifications s'enregistrent dès que vous quittez le champ.</div>` + list.map(p => {
+    const f = familyOf(p.num), ml = (S.stock[p.num]||{}).ml || 0;
+    return `<div class="cat-row" style="border-left-color:${f.color}">
+      <span class="p-num" style="min-width:34px;">#${p.num}</span>
+      <input class="cat-in" style="flex:2 1 150px" value="${escapeHtml(p.name)}" data-k="pname" data-num="${p.num}" aria-label="Nom">
+      <input class="cat-in" style="flex:1.4 1 110px" value="${escapeHtml(p.maison)}" data-k="pmaison" data-num="${p.num}" placeholder="Maison" aria-label="Maison">
+      <select class="cat-in" style="flex:1 1 110px" data-k="pfam" data-num="${p.num}">${famOpts(p.family)}</select>
+      <input class="cat-in" type="number" min="0" step="${S.settings.volumeVente||50}" style="flex:0 0 84px" value="${ml}" data-k="pml" data-num="${p.num}" title="Stock (ml)" aria-label="Stock ml">
+      <span class="hint" style="margin:0">ml</span>
+      <button class="btn ghost small" type="button" data-act="delpar" data-num="${p.num}" title="Supprimer ce parfum">✕</button>
+    </div>`;
+  }).join('');
+}
+function catInner(){
+  const ff = S.catFamily || 'all';
+  const fams = FAMILIES.map(f => {
+    const n = PRODUCTS.filter(p => p.family === f.key).length;
+    return `<div class="cat-row" style="border-left-color:${f.color}">
+      <input type="color" value="${f.color}" data-k="fcolor" data-fkey="${f.key}" style="width:42px;height:34px;padding:2px;border:1px solid var(--line);border-radius:6px;background:#fff;" aria-label="Couleur">
+      <input class="cat-in" style="flex:1 1 140px" value="${escapeHtml(f.label)}" data-k="fname" data-fkey="${f.key}" aria-label="Nom de la famille">
+      <span class="hint" style="margin:0">${n} parfum${n>1?'s':''}</span>
+      <button class="btn ghost small" type="button" data-act="delfam" data-fkey="${f.key}" title="${n?'Déplacez d\\u2019abord les parfums de cette famille':'Supprimer'}"${n?' disabled':''}>✕</button>
+    </div>`;
+  }).join('');
+  return `
+    <div class="section-label" style="margin-top:0">Familles</div>
+    ${fams}
+    <div class="cat-row" style="border-left-color:var(--gold);background:var(--panel-alt)">
+      <input type="color" id="nf-color" value="#1A1A1A" style="width:42px;height:34px;padding:2px;border:1px solid var(--line);border-radius:6px;background:#fff;" aria-label="Couleur">
+      <input class="cat-in" id="nf-label" style="flex:1 1 140px" placeholder="Nouvelle famille (ex. Boisé)">
+      <button class="btn small" type="button" data-act="addfam">+ Ajouter la famille</button>
+    </div>
+    <div class="section-label">Ajouter un parfum</div>
+    <div class="cat-row" style="border-left-color:var(--gold);background:var(--panel-alt)">
+      <input class="cat-in" id="np-name" style="flex:2 1 150px" placeholder="Nom du parfum">
+      <input class="cat-in" id="np-maison" style="flex:1.4 1 110px" placeholder="Maison">
+      <select class="cat-in" id="np-fam" style="flex:1 1 110px">${famOpts('')}</select>
+      <input class="cat-in" id="np-ml" type="number" min="0" style="flex:0 0 84px" value="${S.settings.volumeBouteille||600}" title="Stock de départ (ml)">
+      <button class="btn small" type="button" data-act="addpar">+ Ajouter</button>
+    </div>
+    <div class="section-label">Modifier les parfums</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
+      <input class="cat-in" id="cat-q" style="flex:2 1 180px" placeholder="Rechercher (nom, maison, n°)" value="${escapeHtml(S.catQuery||'')}">
+      <select class="cat-in" id="cat-ff" style="flex:1 1 150px"><option value="all">Toutes les familles</option><option value="_none"${ff==='_none'?' selected':''}>Sans famille</option>${FAMILIES.map(f => `<option value="${f.key}"${ff===f.key?' selected':''}>${escapeHtml(f.label)}</option>`).join('')}</select>
+    </div>
+    <div id="cat-list">${catListHTML()}</div>`;
+}
+function refreshCat(){ const el = document.getElementById('cat-panel'); if(el) el.innerHTML = catInner(); }
+async function saveCatalog(msg){
+  await storSet('lf-catalog', catalogObj());
+  S.lastSync = new Date(); updateSyncLabel();
+  await writeLocalFile();
+  toast(msg + ((typeof window.storage === 'undefined' && !localFileHandle) ? ' — pensez à exporter une sauvegarde.' : ''));
+}
+function bindCatalog(){
+  const root = document.getElementById('cat-panel');
+  if(!root) return;
+  const relist = () => { document.getElementById('cat-list').innerHTML = catListHTML(); };
+  root.addEventListener('input', e => { if(e.target.id === 'cat-q'){ S.catQuery = e.target.value; relist(); } });
+  root.addEventListener('change', async e => {
+    const t = e.target, k = t.dataset.k;
+    if(t.id === 'cat-ff'){ S.catFamily = t.value; relist(); return; }
+    if(!k) return;
+    const p = PRODUCT_BY_NUM[+t.dataset.num], f = FAMILIES.find(x => x.key === t.dataset.fkey);
+    if(k === 'pml'){
+      const v = Math.max(0, Math.round(parseFloat(t.value)) || 0), n = +t.dataset.num;
+      S.stock[n] = {...(S.stock[n]||{sold:0}), ml:v};
+      await mutateStock(s => { s[n] = {...(s[n]||{sold:0}), ml:v}; });
+      await writeLocalFile(); refreshCat(); toast('Stock mis à jour · ' + p.name); return;
+    }
+    if(k === 'pname') p.name = t.value.trim() || p.name;
+    else if(k === 'pmaison') p.maison = t.value.trim();
+    else if(k === 'pfam') p.family = t.value;
+    else if(k === 'fname') f.label = t.value.trim() || f.label;
+    else if(k === 'fcolor') f.color = t.value;
+    else return;
+    await saveCatalog('Modification enregistrée.');
+    refreshCat();
+  });
+  root.addEventListener('click', async e => {
+    const b = e.target.closest('[data-act]'); if(!b) return;
+    const act = b.dataset.act, val = id => document.getElementById(id).value.trim();
+    if(act === 'addfam'){
+      const label = val('nf-label'); if(!label){ toast('Donnez un nom à la famille.'); return; }
+      let key = label.toLowerCase().normalize('NFD').replace(/[^a-z0-9]+/g,'') || 'famille', base = key, i = 2;
+      while(FAMILIES.some(f => f.key === key)) key = base + (i++);
+      FAMILIES.push({key, label, color:document.getElementById('nf-color').value});
+      await saveCatalog('Famille ajoutée.'); refreshCat();
+    } else if(act === 'addpar'){
+      const name = val('np-name'); if(!name){ toast('Donnez un nom au parfum.'); return; }
+      const num = PRODUCTS.reduce((m,p) => Math.max(m,p.num), 0) + 1;
+      const ml = Math.max(0, parseFloat(document.getElementById('np-ml').value) || 0);
+      PRODUCTS.push({num, name, maison:val('np-maison'), family:document.getElementById('np-fam').value});
+      setCatalog(catalogObj());
+      S.stock[num] = {ml, sold:0};
+      await mutateStock(s => { s[num] = {ml, sold:0}; });
+      await saveCatalog('Parfum #' + num + ' ajouté.'); refreshCat();
+    } else if(act === 'delpar'){
+      const n = +b.dataset.num, p = PRODUCT_BY_NUM[n];
+      if(!confirm(`Supprimer « ${p.name} » (#${n}) ? Son stock sera retiré ; l'historique des ventes est conservé.`)) return;
+      PRODUCTS = PRODUCTS.filter(x => x.num !== n); setCatalog(catalogObj()); delete S.stock[n];
+      await mutateStock(s => { delete s[n]; });
+      await saveCatalog('Parfum supprimé.'); refreshCat();
+    } else if(act === 'delfam'){
+      const key = b.dataset.fkey;
+      if(PRODUCTS.some(p => p.family === key)){ toast('Déplacez d\u2019abord les parfums de cette famille.'); return; }
+      FAMILIES = FAMILIES.filter(f => f.key !== key);
+      await saveCatalog('Famille supprimée.'); refreshCat();
+    }
+  });
+}
+
 function bindReglages(){
+  bindCatalog();
   document.getElementById('save-settings').addEventListener('click', async () => {
     const get = id => parseFloat(document.getElementById(id).value);
     S.settings = {
@@ -1401,15 +1570,14 @@ function bindReglages(){
    et retombe sur les données déjà en mémoire si celui-ci est indisponible ou vide,
    pour que l'enregistrement local fonctionne même hors-ligne ou hors de Claude. */
 async function gatherFullData(){
-  let settings = S.settings, stock = S.stock, summary = S.summary, catalog = CATALOG;
+  let settings = S.settings, stock = S.stock, summary = S.summary;
   let sales = {...S.salesByMonth};
   let usedSharedStorage = false;
 
   if(typeof window.storage !== 'undefined'){
     try{
-      const [s2, st2, su2, cat2] = await Promise.all([storGet('lf-settings'), storGet('lf-stock'), storGet('lf-summary'), storGet('lf-catalog')]);
+      const [s2, st2, su2] = await Promise.all([storGet('lf-settings'), storGet('lf-stock'), storGet('lf-summary')]);
       if(s2) settings = s2;
-      if(cat2){ catalog = normalizeCatalog(cat2); usedSharedStorage = true; }
       if(st2){ stock = normalizeStock(st2); usedSharedStorage = true; }
       if(su2){ summary = su2; usedSharedStorage = true; }
       const keys = await storList('lf-sales:');
@@ -1420,7 +1588,7 @@ async function gatherFullData(){
       }
     }catch(e){ /* on garde les données locales déjà en mémoire */ }
   }
-  return { settings, stock, summary, sales, catalog, usedSharedStorage };
+  return { settings, stock, summary, sales, usedSharedStorage };
 }
 
 /* ---------- Fichier local (sauvegarde automatique sur cet ordinateur) ---------- */
@@ -1445,7 +1613,7 @@ async function connectLocalFile(){
         if(data && data.stock && data.sales){
           if(confirm("Ce fichier contient déjà des données La Fontaine. Les charger maintenant ? (remplace les données actuellement affichées)")){
             S.settings = data.settings || {...DEFAULT_SETTINGS};
-            if(data.catalog){ CATALOG = normalizeCatalog(data.catalog); rebuildCatalogIndexes(); }
+            applyCatalogFromData(data);
             S.stock = normalizeStock(data.stock);
             S.summary = data.summary || {months:{}, days:{}};
             S.salesByMonth = {...data.sales};
@@ -1468,7 +1636,7 @@ async function writeLocalFile(){
   if(!localFileHandle) return;
   try{
     const { settings, stock, summary, sales } = await gatherFullData();
-    const payload = { exportedAt: new Date().toISOString(), app: 'La Fontaine', settings, stock, summary, sales };
+    const payload = { exportedAt: new Date().toISOString(), app: 'La Fontaine', settings, stock, summary, sales, ...catalogPayload() };
     const writable = await localFileHandle.createWritable();
     await writable.write(JSON.stringify(payload, null, 2));
     await writable.close();
@@ -1486,8 +1654,8 @@ async function writeLocalFile(){
    du navigateur à chaque vente, en plus du fichier local connecté (s'il y en a un). */
 async function downloadSaleBackupJSON(){
   try{
-    const { settings, stock, summary, sales, catalog } = await gatherFullData();
-    const payload = { exportedAt: new Date().toISOString(), app: 'La Fontaine', settings, stock, summary, sales, catalog };
+    const { settings, stock, summary, sales } = await gatherFullData();
+    const payload = { exportedAt: new Date().toISOString(), app: 'La Fontaine', settings, stock, summary, sales, ...catalogPayload() };
     const blob = new Blob([JSON.stringify(payload, null, 2)], {type: 'application/json'});
     const stamp = todayISO() + '-' + nowTime().replace(':', 'h');
     downloadBlob(blob, `lafontaine-vente-${stamp}.json`);
@@ -1497,8 +1665,8 @@ async function downloadSaleBackupJSON(){
 async function exportBackup(){
   toast('Préparation de la sauvegarde…');
   try{
-    const { settings, stock, summary, sales, catalog, usedSharedStorage } = await gatherFullData();
-    const payload = { exportedAt: new Date().toISOString(), app: 'La Fontaine', settings, stock, summary, sales, catalog };
+    const { settings, stock, summary, sales, usedSharedStorage } = await gatherFullData();
+    const payload = { exportedAt: new Date().toISOString(), app: 'La Fontaine', settings, stock, summary, sales, ...catalogPayload() };
     const blob = new Blob([JSON.stringify(payload, null, 2)], {type: 'application/json'});
     downloadBlob(blob, `lafontaine-sauvegarde-${todayISO()}.json`);
     toast(usedSharedStorage ? 'Sauvegarde téléchargée.' : 'Sauvegarde téléchargée (données de cette session seulement — stockage partagé indisponible).');
@@ -1561,14 +1729,13 @@ async function importBackup(e){
     if(!confirm('Importer cette sauvegarde remplacera toutes les données actuelles pour tous les utilisateurs. Continuer ?')) return;
     toast('Importation en cours…');
     S.settings = data.settings || {...DEFAULT_SETTINGS};
-    if(data.catalog){ CATALOG = normalizeCatalog(data.catalog); rebuildCatalogIndexes(); }
-    S.stock = normalizeStock(data.stock);
+    applyCatalogFromData(data);
+            S.stock = normalizeStock(data.stock);
     S.summary = data.summary || {months:{}, days:{}};
     S.salesByMonth = {...data.sales};
     if(typeof window.storage !== 'undefined'){
       try{
         if(data.settings) await storSet('lf-settings', data.settings);
-        await storSet('lf-catalog', CATALOG);
         await storSet('lf-stock', S.stock);
         await storSet('lf-summary', S.summary);
         for(const [mk, arr] of Object.entries(data.sales)){ await storSet('lf-sales:' + mk, arr); }
